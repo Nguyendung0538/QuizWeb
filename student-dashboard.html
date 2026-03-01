@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d41c34",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#211113",
+                        "ptit-yellow": "#FFB81C",
+                        "success-green": "#10B981",
+                        "text-primary": "#1E293B",
+                        "text-secondary": "#64748B",
+                        "border-light": "#E2E8F0"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <title>Student Exam Dashboard | Quiz Web PTIT</title>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-text-primary min-h-screen flex flex-col">
+    <!-- Top App Bar -->
+    <header
+        class="sticky top-0 z-50 bg-white border-b border-border-light px-4 md:px-10 lg:px-40 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="text-primary">
+                <span class="material-symbols-outlined text-3xl">school</span>
+            </div>
+            <h2 class="text-primary text-xl font-bold tracking-tight">Quiz Web PTIT</h2>
+        </div>
+        <div class="flex items-center gap-6">
+            <div class="hidden md:flex items-center gap-2">
+                <span class="text-text-primary font-medium">Nguyễn Văn A</span>
+                <div
+                    class="size-9 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden border border-primary/20">
+                    <img alt="Avatar của Nguyễn Văn A" data-alt="Hình đại diện tròn của một sinh viên nam"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMjpATqfMRPWHvj3cWZ2fNeaPqXDz_oRBosdkwWWTBct5CEL6bwY8TWqlNYD8GjQJ_kvwOcRKUrkM1vGmRsIP2P24CcI2tMIXZARMW6BslHKg-onrgvxFyU4Fnd5nL8IgVlPVSBqfrXbhfwFo1HQ2_HZ4HbQjVomX8muDKUFXHcB7Dguz4J6sS_BURK8mqcBH0Ai7aLXoOYhOmxl7w7U0OdDLa0PrzmeaQjl51PJw5eR2aXY2Ud-yxdQDo4aWm42rpyNMKg59Y1a3X" />
+                </div>
+            </div>
+            <a class="text-text-secondary text-sm font-semibold hover:text-primary transition-colors flex items-center gap-1"
+                href="#">
+                <span class="material-symbols-outlined text-[20px]">logout</span>
+                Đăng xuất
+            </a>
+        </div>
+    </header>
+    <main class="flex-1 max-w-[1200px] mx-auto w-full px-4 py-8">
+        <!-- Hero Section -->
+        <section class="mb-10">
+            <h1 class="text-text-primary text-4xl font-extrabold tracking-tight mb-2">Xin chào, Nguyễn Văn A</h1>
+            <p class="text-text-secondary text-lg">Chúc bạn có một buổi ôn tập và làm bài hiệu quả tại Quiz Web PTIT.
+            </p>
+        </section>
+        <!-- Search & Filter Section -->
+        <section class="mb-8 space-y-4">
+            <div class="relative w-full max-w-2xl">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span class="material-symbols-outlined text-text-secondary">search</span>
+                </div>
+                <input
+                    class="block w-full pl-10 pr-3 py-3 border border-[#CBD5E1] rounded-lg bg-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    placeholder="Tìm kiếm bài thi (ví dụ: Mạng máy tính...)" type="text" />
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <button
+                    class="px-5 py-2 rounded-full bg-primary text-white text-sm font-semibold shadow-sm hover:opacity-90 transition-opacity">
+                    Tất cả
+                </button>
+                <button
+                    class="px-5 py-2 rounded-full bg-white border border-border-light text-text-secondary text-sm font-semibold hover:bg-primary/5 hover:text-primary hover:border-primary transition-all">
+                    Luyện tập tự do
+                </button>
+                <button
+                    class="px-5 py-2 rounded-full bg-white border border-border-light text-text-secondary text-sm font-semibold hover:bg-primary/5 hover:text-primary hover:border-primary transition-all">
+                    Giữa kỳ
+                </button>
+                <button
+                    class="px-5 py-2 rounded-full bg-white border border-border-light text-text-secondary text-sm font-semibold hover:bg-primary/5 hover:text-primary hover:border-primary transition-all">
+                    Cuối kỳ
+                </button>
+            </div>
+        </section>
+        <!-- Exam Grid Header -->
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-text-primary text-2xl font-bold tracking-tight">Danh sách bài thi khả dụng</h2>
+            <span class="text-text-secondary text-sm">8 bài thi tìm thấy</span>
+        </div>
+        <!-- Exam Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Card 1: Ready -->
+            <div
+                class="bg-[#F8F9FA] border border-border-light rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between group">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span
+                            class="px-3 py-1 rounded-full bg-success-green/10 text-success-green text-xs font-bold uppercase tracking-wider">
+                            Sẵn sàng
+                        </span>
+                        <span
+                            class="material-symbols-outlined text-text-secondary opacity-0 group-hover:opacity-100 transition-opacity">info</span>
+                    </div>
+                    <h3 class="text-text-primary text-lg font-bold leading-tight mb-4">Kiểm tra Giữa kỳ Mạng Máy Tính
+                    </h3>
+                    <div class="space-y-2 mb-6">
+                        <div class="flex items-center gap-2 text-text-secondary text-sm">
+                            <span class="material-symbols-outlined text-[18px]">quiz</span>
+                            Số câu hỏi: 40
+                        </div>
+                        <div class="flex items-center gap-2 text-text-secondary text-sm">
+                            <span class="material-symbols-outlined text-[18px]">schedule</span>
+                            Thời gian: 45 phút
+                        </div>
+                    </div>
+                </div>
+                <button
+                    class="w-full bg-primary text-white py-2.5 rounded-lg font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all">
+                    Bắt đầu làm bài
+                </button>
+            </div>
+            <!-- Card 2: Upcoming -->
+            <div
+                class="bg-[#F8F9FA] border border-border-light rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between group">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span
+                            class="px-3 py-1 rounded-full bg-ptit-yellow/10 text-ptit-yellow text-xs font-bold uppercase tracking-wider">
+                            Sắp diễn ra
+                        </span>
+                        <span
+                            class="material-symbols-outlined text-text-secondary opacity-0 group-hover:opacity-100 transition-opacity">info</span>
+                    </div>
+                    <h3 class="text-text-primary text-lg font-bold leading-tight mb-4">Kiểm tra Cuối kỳ Cấu trúc dữ liệu
+                        và Giải thuật</h3>
+                    <div class="space-y-2 mb-6">
+                        <div class="flex items-center gap-2 text-text-secondary text-sm">
+                            <span class="material-symbols-outlined text-[18px]">quiz</span>
+                            Số câu hỏi: 50
+                        </div>
+                        <div class="flex items-center gap-2 text-text-secondary text-sm">
+                            <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                            Ngày thi: 15/12/2024
+                        </div>
+                    </div>
+                </div>
+                <button
+                    class="w-full bg-slate-200 text-slate-500 py-2.5 rounded-lg font-bold text-sm cursor-not-allowed">
+                    Chưa mở
+                </button>
+            </div>
+            <!-- Card 3: Ready -->
+            <div
+                class="bg-[#F8F9FA] border border-border-light rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between group">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span
+                            class="px-3 py-1 rounded-full bg-success-green/10 text-success-green text-xs font-bold uppercase tracking-wider">
+                            Sẵn sàng
+                        </span>
+                        <span
+                            class="material-symbols-outlined text-text-secondary opacity-0 group-hover:opacity-100 transition-opacity">info</span>
+                    </div>
+                    <h3 class="text-text-primary text-lg font-bold leading-tight mb-4">Luyện tập Lập trình hướng đối
+                        tượng</h3>
+                    <div class="space-y-2 mb-6">
+                        <div class="flex items-center gap-2 text-text-secondary text-sm">
+                            <span class="material-symbols-outlined text-[18px]">quiz</span>
+                            Số câu hỏi: 25
+                        </div>
+                        <div class="flex items-center gap-2 text-text-secondary text-sm">
+                            <span class="material-symbols-outlined text-[18px]">schedule</span>
+                            Thời gian: 30 phút
+                        </div>
+                    </div>
+                </div>
+                <button
+                    class="w-full bg-primary text-white py-2.5 rounded-lg font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all">
+                    Bắt đầu làm bài
+                </button>
+            </div>
+            <!-- Card 4: Ready -->
+            <div
+                class="bg-[#F8F9FA] border border-border-light rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between group">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span
+                            class="px-3 py-1 rounded-full bg-success-green/10 text-success-green text-xs font-bold uppercase tracking-wider">
+                            Sẵn sàng
+                        </span>
+                    </div>
+                    <h3 class="text-text-primary text-lg font-bold leading-tight mb-4">Trắc nghiệm Cơ sở dữ liệu</h3>
+                    <div class="space-y-2 mb-6">
+                        <div class="flex items-center gap-2 text-text-secondary text-sm">
+                            <span class="material-symbols-outlined text-[18px]">quiz</span>
+                            Số câu hỏi: 30
+                        </div>
+                        <div class="flex items-center gap-2 text-text-secondary text-sm">
+                            <span class="material-symbols-outlined text-[18px]">schedule</span>
+                            Thời gian: 40 phút
+                        </div>
+                    </div>
+                </div>
+                <button
+                    class="w-full bg-primary text-white py-2.5 rounded-lg font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all">
+                    Bắt đầu làm bài
+                </button>
+            </div>
+            <!-- Card 5: Upcoming -->
+            <div
+                class="bg-[#F8F9FA] border border-border-light rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between group">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span
+                            class="px-3 py-1 rounded-full bg-ptit-yellow/10 text-ptit-yellow text-xs font-bold uppercase tracking-wider">
+                            Sắp diễn ra
+                        </span>
+                    </div>
+                    <h3 class="text-text-primary text-lg font-bold leading-tight mb-4">Giữa kỳ An toàn thông tin</h3>
+                    <div class="space-y-2 mb-6">
+                        <div class="flex items-center gap-2 text-text-secondary text-sm">
+                            <span class="material-symbols-outlined text-[18px]">quiz</span>
+                            Số câu hỏi: 45
+                        </div>
+                        <div class="flex items-center gap-2 text-text-secondary text-sm">
+                            <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                            Ngày thi: 20/11/2024
+                        </div>
+                    </div>
+                </div>
+                <button
+                    class="w-full bg-slate-200 text-slate-500 py-2.5 rounded-lg font-bold text-sm cursor-not-allowed">
+                    Chưa mở
+                </button>
+            </div>
+            <!-- Card 6: Ready -->
+            <div
+                class="bg-[#F8F9FA] border border-border-light rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between group">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span
+                            class="px-3 py-1 rounded-full bg-success-green/10 text-success-green text-xs font-bold uppercase tracking-wider">
+                            Sẵn sàng
+                        </span>
+                    </div>
+                    <h3 class="text-text-primary text-lg font-bold leading-tight mb-4">Luyện tập Hệ điều hành</h3>
+                    <div class="space-y-2 mb-6">
+                        <div class="flex items-center gap-2 text-text-secondary text-sm">
+                            <span class="material-symbols-outlined text-[18px]">quiz</span>
+                            Số câu hỏi: 20
+                        </div>
+                        <div class="flex items-center gap-2 text-text-secondary text-sm">
+                            <span class="material-symbols-outlined text-[18px]">schedule</span>
+                            Thời gian: 25 phút
+                        </div>
+                    </div>
+                </div>
+                <button
+                    class="w-full bg-primary text-white py-2.5 rounded-lg font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all">
+                    Bắt đầu làm bài
+                </button>
+            </div>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-white border-t border-border-light py-6 text-center mt-12">
+        <p class="text-text-secondary text-sm font-medium">© 2024 Quiz Web PTIT - Phát triển bởi Học viện Công nghệ Bưu
+            chính Viễn thông</p>
+    </footer>
+</body>
+
+</html>

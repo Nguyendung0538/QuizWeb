@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Đăng ký - Quiz Web PTIT</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d41c34",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#211113",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="font-display bg-white min-h-screen flex flex-col">
+    <div class="relative flex h-auto min-h-screen w-full flex-col bg-white group/design-root overflow-x-hidden">
+        <div class="layout-container flex h-full grow flex-col">
+            <header
+                class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-100 px-10 py-4">
+                <div class="flex items-center gap-3 text-primary">
+                    <div class="text-primary">
+                        <span class="material-symbols-outlined text-3xl">school</span>
+                    </div>
+                    <h2 class="text-primary text-xl font-bold leading-tight tracking-tight">Quiz Web PTIT</h2>
+                </div>
+                <div class="flex flex-1 justify-end gap-8 items-center">
+                    <nav class="hidden md:flex items-center gap-8">
+                        <a class="text-slate-600 hover:text-primary text-sm font-medium transition-colors"
+                            href="#">Trang chủ</a>
+                        <a class="text-slate-600 hover:text-primary text-sm font-medium transition-colors" href="#">Giới
+                            thiệu</a>
+                        <a class="text-slate-600 hover:text-primary text-sm font-medium transition-colors"
+                            href="#">Hướng dẫn</a>
+                    </nav>
+                    <button
+                        class="flex min-w-[100px] cursor-pointer items-center justify-center rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-sm hover:bg-red-700 transition-colors">
+                        <span>Đăng nhập</span>
+                    </button>
+                </div>
+            </header>
+            <main class="flex flex-1 items-center justify-center p-6 bg-slate-50">
+                <div
+                    class="w-full max-w-[480px] bg-white rounded-xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                    <div class="flex border-b border-slate-100">
+                        <button
+                            class="flex-1 py-4 text-center text-sm font-semibold text-slate-400 hover:text-slate-600 transition-colors">
+                            Đăng nhập
+                        </button>
+                        <button
+                            class="flex-1 py-4 text-center text-sm font-bold text-primary border-b-2 border-primary">
+                            Đăng ký
+                        </button>
+                    </div>
+                    <div class="p-8">
+                        <div class="mb-8">
+                            <h1 class="text-2xl font-bold text-slate-900">Tạo tài khoản mới</h1>
+                        </div>
+                        <form class="space-y-5">
+                            <div class="space-y-2">
+                                <label class="text-slate-700 text-sm font-semibold flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">person</span>
+                                    Họ và tên
+                                </label>
+                                <input
+                                    class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+                                    placeholder="Nguyễn Văn A" type="text" />
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-slate-700 text-sm font-semibold flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">mail</span>
+                                    Email
+                                </label>
+                                <input
+                                    class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+                                    placeholder="example@student.ptit.edu.vn" type="email" />
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label class="text-slate-700 text-sm font-semibold flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm">lock</span>
+                                        Mật khẩu
+                                    </label>
+                                    <input
+                                        class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+                                        placeholder="••••••••" type="password" />
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-slate-700 text-sm font-semibold flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm">verified_user</span>
+                                        Xác nhận
+                                    </label>
+                                    <input
+                                        class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+                                        placeholder="••••••••" type="password" />
+                                </div>
+                            </div>
+                            <div class="pt-2">
+                                <button
+                                    class="w-full h-12 bg-primary hover:bg-red-700 text-white font-bold rounded-lg transition-colors shadow-md shadow-primary/20 flex items-center justify-center gap-2"
+                                    type="submit">
+                                    Đăng ký
+                                    <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="px-8 pb-8 text-center">
+                        <p class="text-sm text-slate-500">
+                            Đã có tài khoản?
+                            <a class="text-primary font-bold hover:underline" href="#">Đăng nhập ngay</a>
+                        </p>
+                    </div>
+                </div>
+            </main>
+            <footer class="py-8 px-10 text-center text-slate-400 text-xs border-t border-slate-100 bg-white">
+                <div class="flex flex-col items-center gap-2">
+                    <p>© 2024 Học viện Công nghệ Bưu chính Viễn thông - Quiz Web PTIT</p>
+                    <div class="flex gap-4">
+                        <a class="hover:text-primary transition-colors" href="#">Điều khoản dịch vụ</a>
+                        <span>•</span>
+                        <a class="hover:text-primary transition-colors" href="#">Chính sách bảo mật</a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+
+</html>

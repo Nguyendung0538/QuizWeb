@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>PTIT Exam Taking Interface</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#d41c34",
+                        "text-main": "#1e293b",
+                        "background-light": "#f8f9fa",
+                        "border-light": "#e2e8f0",
+                        "background-dark": "#211113",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .custom-radio:checked {
+            background-color: #d41c34;
+            border-color: #d41c34;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-text-main min-h-screen">
+    <header
+        class="sticky top-0 z-50 w-full bg-white dark:bg-slate-900 border-b border-border-light dark:border-slate-800 shadow-sm">
+        <div class="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-white">
+                    <span class="material-symbols-outlined text-xl">school</span>
+                </div>
+                <h1 class="text-lg font-semibold text-text-main dark:text-slate-100 truncate max-w-[400px]">
+                    Bài thi: Kiểm tra Giữa kỳ Mạng Máy Tính
+                </h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 px-4 py-1.5 border-2 border-primary rounded-lg bg-primary/5">
+                    <span class="material-symbols-outlined text-primary text-xl">timer</span>
+                    <span class="text-primary font-bold text-lg tabular-nums">44:59</span>
+                </div>
+                <button
+                    class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-bold transition-colors shadow-md shadow-primary/20">
+                    Nộp bài
+                </button>
+            </div>
+        </div>
+    </header>
+    <main class="max-w-[1440px] mx-auto px-6 py-8 flex gap-8">
+        <section class="w-3/4 space-y-6">
+            <div
+                class="bg-white dark:bg-slate-900 border border-border-light dark:border-slate-800 rounded-lg p-6 shadow-sm">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-lg font-bold text-text-main dark:text-slate-100">Câu 1: Kiến trúc mạng TCP/IP có bao
+                        nhiêu tầng?</h3>
+                    <span
+                        class="text-xs font-medium text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">1.0
+                        điểm</span>
+                </div>
+                <div class="space-y-3">
+                    <label
+                        class="flex items-center gap-3 p-4 border border-border-light dark:border-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <input class="w-5 h-5 text-primary focus:ring-primary border-slate-300" name="q1"
+                            type="radio" />
+                        <span class="text-slate-700 dark:text-slate-300">A. 3 tầng</span>
+                    </label>
+                    <label
+                        class="flex items-center gap-3 p-4 border-2 border-primary bg-primary/5 rounded-lg cursor-pointer transition-colors">
+                        <input checked="" class="w-5 h-5 text-primary focus:ring-primary border-primary" name="q1"
+                            type="radio" />
+                        <span class="text-text-main dark:text-slate-100 font-medium">B. 4 tầng</span>
+                    </label>
+                    <label
+                        class="flex items-center gap-3 p-4 border border-border-light dark:border-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <input class="w-5 h-5 text-primary focus:ring-primary border-slate-300" name="q1"
+                            type="radio" />
+                        <span class="text-slate-700 dark:text-slate-300">C. 5 tầng</span>
+                    </label>
+                    <label
+                        class="flex items-center gap-3 p-4 border border-border-light dark:border-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <input class="w-5 h-5 text-primary focus:ring-primary border-slate-300" name="q1"
+                            type="radio" />
+                        <span class="text-slate-700 dark:text-slate-300">D. 7 tầng</span>
+                    </label>
+                </div>
+            </div>
+            <div
+                class="bg-white dark:bg-slate-900 border border-border-light dark:border-slate-800 rounded-lg p-6 shadow-sm">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-lg font-bold text-text-main dark:text-slate-100">Câu 2: Giao thức nào dưới đây thuộc
+                        tầng Giao vận (Transport Layer)?</h3>
+                    <span
+                        class="text-xs font-medium text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">1.0
+                        điểm</span>
+                </div>
+                <div class="space-y-3">
+                    <label
+                        class="flex items-center gap-3 p-4 border border-border-light dark:border-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <input class="w-5 h-5 text-primary focus:ring-primary border-slate-300" name="q2"
+                            type="radio" />
+                        <span class="text-slate-700 dark:text-slate-300">A. IP</span>
+                    </label>
+                    <label
+                        class="flex items-center gap-3 p-4 border border-border-light dark:border-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <input class="w-5 h-5 text-primary focus:ring-primary border-slate-300" name="q2"
+                            type="radio" />
+                        <span class="text-slate-700 dark:text-slate-300">B. HTTP</span>
+                    </label>
+                    <label
+                        class="flex items-center gap-3 p-4 border border-border-light dark:border-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <input class="w-5 h-5 text-primary focus:ring-primary border-slate-300" name="q2"
+                            type="radio" />
+                        <span class="text-slate-700 dark:text-slate-300">C. TCP</span>
+                    </label>
+                    <label
+                        class="flex items-center gap-3 p-4 border border-border-light dark:border-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <input class="w-5 h-5 text-primary focus:ring-primary border-slate-300" name="q2"
+                            type="radio" />
+                        <span class="text-slate-700 dark:text-slate-300">D. Ethernet</span>
+                    </label>
+                </div>
+            </div>
+            <div
+                class="bg-white dark:bg-slate-900 border border-border-light dark:border-slate-800 rounded-lg p-6 shadow-sm">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-lg font-bold text-text-main dark:text-slate-100">Câu 3: Đơn vị dữ liệu (PDU) tại
+                        tầng Mạng là gì?</h3>
+                    <span
+                        class="text-xs font-medium text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">1.0
+                        điểm</span>
+                </div>
+                <div class="space-y-3">
+                    <label
+                        class="flex items-center gap-3 p-4 border border-border-light dark:border-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <input class="w-5 h-5 text-primary focus:ring-primary border-slate-300" name="q3"
+                            type="radio" />
+                        <span class="text-slate-700 dark:text-slate-300">A. Segment</span>
+                    </label>
+                    <label
+                        class="flex items-center gap-3 p-4 border-2 border-primary bg-primary/5 rounded-lg cursor-pointer transition-colors">
+                        <input checked="" class="w-5 h-5 text-primary focus:ring-primary border-primary" name="q3"
+                            type="radio" />
+                        <span class="text-text-main dark:text-slate-100 font-medium">B. Packet</span>
+                    </label>
+                    <label
+                        class="flex items-center gap-3 p-4 border border-border-light dark:border-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <input class="w-5 h-5 text-primary focus:ring-primary border-slate-300" name="q3"
+                            type="radio" />
+                        <span class="text-slate-700 dark:text-slate-300">C. Frame</span>
+                    </label>
+                    <label
+                        class="flex items-center gap-3 p-4 border border-border-light dark:border-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <input class="w-5 h-5 text-primary focus:ring-primary border-slate-300" name="q3"
+                            type="radio" />
+                        <span class="text-slate-700 dark:text-slate-300">D. Bits</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex justify-between py-4">
+                <button
+                    class="flex items-center gap-2 px-6 py-2 border border-border-light bg-white rounded-lg font-semibold hover:bg-slate-50 transition-colors">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Câu trước
+                </button>
+                <button
+                    class="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90 transition-colors">
+                    Câu tiếp theo
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </div>
+        </section>
+        <aside class="w-1/4">
+            <div
+                class="sticky top-24 bg-white dark:bg-slate-900 border border-border-light dark:border-slate-800 rounded-lg p-6 shadow-sm">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="font-bold text-text-main dark:text-slate-100">Danh sách câu hỏi</h3>
+                    <span class="text-xs text-slate-500 font-medium">Đã làm: 12/40</span>
+                </div>
+                <div class="grid grid-cols-5 gap-2 mb-8">
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold bg-primary/10 text-primary border border-primary/20">1</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600 hover:border-primary transition-colors">2</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold bg-primary/10 text-primary border border-primary/20">3</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">4</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">5</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold bg-primary/10 text-primary border border-primary/20">6</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold bg-primary/10 text-primary border border-primary/20">7</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">8</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">9</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">10</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold bg-primary/10 text-primary border border-primary/20">11</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold bg-primary/10 text-primary border border-primary/20">12</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">13</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">14</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">15</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold bg-primary/10 text-primary border border-primary/20">16</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">17</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">18</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">19</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">20</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold bg-primary/10 text-primary border border-primary/20">21</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold bg-primary/10 text-primary border border-primary/20">22</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">23</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">24</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">25</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold bg-primary/10 text-primary border border-primary/20">26</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">27</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">28</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">29</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">30</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">31</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">32</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">33</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">34</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">35</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">36</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">37</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">38</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">39</button>
+                    <button
+                        class="aspect-square flex items-center justify-center rounded-lg text-sm font-bold border border-slate-200 text-slate-600">40</button>
+                </div>
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-4 h-4 bg-primary/10 border border-primary/20 rounded"></div>
+                        <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Đã trả lời</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-4 h-4 bg-white border border-slate-200 rounded"></div>
+                        <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Chưa trả lời</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+    <footer
+        class="mt-auto py-8 bg-white dark:bg-slate-900 border-t border-border-light dark:border-slate-800 text-center">
+        <p class="text-slate-400 text-sm">© 2024 Quiz Web PTIT - Hệ thống thi trắc nghiệm trực tuyến</p>
+    </footer>
+</body>
+
+</html>
