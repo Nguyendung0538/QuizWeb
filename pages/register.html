@@ -15,24 +15,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#d41c34",
-                        "background-light": "#f8f6f6",
-                        "background-dark": "#211113",
-                    },
-                    fontFamily: {
-                        "display": ["Inter"]
-                    },
-                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-                },
-            },
-        }
-    </script>
+    <script src="../assets/js/tailwind.config.js"></script>
+    <link href="../assets/css/style.css" rel="stylesheet" />
 </head>
 
 <body class="font-display bg-white min-h-screen flex flex-col">
@@ -46,26 +30,12 @@
                     </div>
                     <h2 class="text-primary text-xl font-bold leading-tight tracking-tight">Quiz Web PTIT</h2>
                 </div>
-                <div class="flex flex-1 justify-end gap-8 items-center">
-                    <nav class="hidden md:flex items-center gap-8">
-                        <a class="text-slate-600 hover:text-primary text-sm font-medium transition-colors"
-                            href="#">Trang chủ</a>
-                        <a class="text-slate-600 hover:text-primary text-sm font-medium transition-colors" href="#">Giới
-                            thiệu</a>
-                        <a class="text-slate-600 hover:text-primary text-sm font-medium transition-colors"
-                            href="#">Hướng dẫn</a>
-                    </nav>
-                    <button
-                        class="flex min-w-[100px] cursor-pointer items-center justify-center rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-sm hover:bg-red-700 transition-colors">
-                        <span>Đăng nhập</span>
-                    </button>
-                </div>
             </header>
             <main class="flex flex-1 items-center justify-center p-6 bg-slate-50">
                 <div
                     class="w-full max-w-[480px] bg-white rounded-xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
                     <div class="flex border-b border-slate-100">
-                        <button
+                        <button onclick="window.location.href='login.html'"
                             class="flex-1 py-4 text-center text-sm font-semibold text-slate-400 hover:text-slate-600 transition-colors">
                             Đăng nhập
                         </button>
@@ -78,24 +48,27 @@
                         <div class="mb-8">
                             <h1 class="text-2xl font-bold text-slate-900">Tạo tài khoản mới</h1>
                         </div>
-                        <form class="space-y-5">
+                        <form id="registerForm" class="space-y-5">
                             <div class="space-y-2">
                                 <label class="text-slate-700 text-sm font-semibold flex items-center gap-2">
                                     <span class="material-symbols-outlined text-sm">person</span>
                                     Họ và tên
                                 </label>
-                                <input
+                                <input id="nameInput"
                                     class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
                                     placeholder="Nguyễn Văn A" type="text" />
+                                <p id="nameError" class="text-red-500 text-xs mt-1 hidden">Vui lòng nhập họ và tên</p>
                             </div>
                             <div class="space-y-2">
                                 <label class="text-slate-700 text-sm font-semibold flex items-center gap-2">
                                     <span class="material-symbols-outlined text-sm">mail</span>
                                     Email
                                 </label>
-                                <input
+                                <input id="emailInput"
                                     class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
-                                    placeholder="example@student.ptit.edu.vn" type="email" />
+                                    placeholder="example@gmail.com" type="email" />
+                                <p id="emailError" class="text-red-500 text-xs mt-1 hidden">Vui lòng nhập email hợp lệ
+                                </p>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="space-y-2">
@@ -103,18 +76,22 @@
                                         <span class="material-symbols-outlined text-sm">lock</span>
                                         Mật khẩu
                                     </label>
-                                    <input
+                                    <input id="passwordInput"
                                         class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
                                         placeholder="••••••••" type="password" />
+                                    <p id="passwordError" class="text-red-500 text-xs mt-1 hidden">Vui lòng nhập mật
+                                        khẩu (ít nhất 6 ký tự)</p>
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-slate-700 text-sm font-semibold flex items-center gap-2">
                                         <span class="material-symbols-outlined text-sm">verified_user</span>
                                         Xác nhận
                                     </label>
-                                    <input
+                                    <input id="confirmPasswordInput"
                                         class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
                                         placeholder="••••••••" type="password" />
+                                    <p id="confirmError" class="text-red-500 text-xs mt-1 hidden">Mật khẩu xác nhận
+                                        không khớp</p>
                                 </div>
                             </div>
                             <div class="pt-2">
@@ -131,7 +108,7 @@
                     <div class="px-8 pb-8 text-center">
                         <p class="text-sm text-slate-500">
                             Đã có tài khoản?
-                            <a class="text-primary font-bold hover:underline" href="#">Đăng nhập ngay</a>
+                            <a class="text-primary font-bold hover:underline" href="login.html">Đăng nhập ngay</a>
                         </p>
                     </div>
                 </div>
@@ -141,7 +118,8 @@
                     Bưu chính Viễn thông</p>
             </footer>
         </div>
-    </div>
+
+        <script src="../assets/js/register.js"></script>
 </body>
 
 </html>

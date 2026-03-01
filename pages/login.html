@@ -15,33 +15,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#d41c34",
-                        "background-light": "#f8f6f6",
-                        "background-dark": "#211113",
-                    },
-                    fontFamily: {
-                        "display": ["Inter"]
-                    },
-                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-                },
-            },
-        }
-    </script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-    </style>
+    <script src="../assets/js/tailwind.config.js"></script>
+    <link href="../assets/css/style.css" rel="stylesheet" />
 </head>
 
 <body class="font-display bg-white min-h-screen flex flex-col">
@@ -55,20 +30,6 @@
                     </div>
                     <h2 class="text-primary text-xl font-bold leading-tight tracking-tight">Quiz Web PTIT</h2>
                 </div>
-                <div class="flex flex-1 justify-end gap-8 items-center">
-                    <nav class="hidden md:flex items-center gap-8">
-                        <a class="text-slate-600 hover:text-primary text-sm font-medium transition-colors"
-                            href="#">Trang chủ</a>
-                        <a class="text-slate-600 hover:text-primary text-sm font-medium transition-colors" href="#">Giới
-                            thiệu</a>
-                        <a class="text-slate-600 hover:text-primary text-sm font-medium transition-colors"
-                            href="#">Hướng dẫn</a>
-                    </nav>
-                    <button
-                        class="flex min-w-[100px] cursor-pointer items-center justify-center rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-sm hover:bg-red-700 transition-colors">
-                        <span>Đăng ký</span>
-                    </button>
-                </div>
             </header>
             <main class="flex flex-1 items-center justify-center p-6 bg-slate-50">
                 <div
@@ -78,7 +39,7 @@
                             class="flex-1 py-4 text-center text-sm font-bold text-primary border-b-2 border-primary">
                             Đăng nhập
                         </button>
-                        <button
+                        <button onclick="window.location.href='register.html'"
                             class="flex-1 py-4 text-center text-sm font-semibold text-slate-400 hover:text-slate-600 transition-colors">
                             Đăng ký
                         </button>
@@ -87,15 +48,17 @@
                         <div class="mb-8">
                             <h1 class="text-2xl font-bold text-slate-900">Đăng nhập tài khoản</h1>
                         </div>
-                        <form class="space-y-5">
+                        <form id="loginForm" class="space-y-5">
                             <div class="space-y-2">
                                 <label class="text-slate-700 text-sm font-semibold flex items-center gap-2">
                                     <span class="material-symbols-outlined text-sm">person</span>
-                                    Tên đăng nhập
+                                    Email đăng nhập
                                 </label>
-                                <input
+                                <input id="usernameInput"
                                     class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
-                                    placeholder="Mã sinh viên hoặc Email" type="text" />
+                                    placeholder="Email" type="text" />
+                                <p id="usernameError" class="text-red-500 text-xs mt-1 hidden">Vui lòng nhập Email đăng
+                                    nhập</p>
                             </div>
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center">
@@ -107,15 +70,17 @@
                                         khẩu?</a>
                                 </div>
                                 <div class="relative">
-                                    <input
+                                    <input id="passwordInput"
                                         class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400 pr-12"
                                         placeholder="••••••••" type="password" />
-                                    <button
+                                    <button id="togglePasswordBtn"
                                         class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                                         type="button">
                                         <span class="material-symbols-outlined text-[20px]">visibility</span>
                                     </button>
                                 </div>
+                                <p id="passwordError" class="text-red-500 text-xs mt-1 hidden">Vui lòng nhập mật khẩu
+                                </p>
                             </div>
                             <div class="flex items-center gap-2 pt-1">
                                 <input
@@ -137,7 +102,7 @@
                     <div class="px-8 pb-8 text-center">
                         <p class="text-sm text-slate-500">
                             Chưa có tài khoản?
-                            <a class="text-primary font-bold hover:underline" href="#">Đăng ký ngay</a>
+                            <a class="text-primary font-bold hover:underline" href="register.html">Đăng ký ngay</a>
                         </p>
                     </div>
                 </div>
@@ -148,6 +113,8 @@
             </footer>
         </div>
     </div>
+
+    <script src="../assets/js/login.js"></script>
 </body>
 
 </html>
