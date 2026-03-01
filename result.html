@@ -52,16 +52,16 @@
     </style>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<body class="bg-slate-50 text-slate-900 font-display">
     <div class="relative flex min-h-screen flex-col">
         <!-- Top App Bar -->
         <header
-            class="sticky top-0 z-50 w-full border-b border-primary/10 bg-white/80 backdrop-blur-md px-6 lg:px-20 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-3">
+            class="sticky top-0 z-50 w-full flex items-center justify-between bg-white border-b border-solid border-slate-100 px-10 py-4">
+            <div class="flex items-center gap-3 text-primary">
                 <div class="text-primary flex items-center">
                     <span class="material-symbols-outlined text-3xl">school</span>
                 </div>
-                <h1 class="text-xl font-bold tracking-tight text-primary">Quiz Web PTIT</h1>
+                <h1 class="text-primary text-xl font-bold leading-tight tracking-tight">Quiz Web PTIT</h1>
             </div>
             <div class="flex items-center gap-6">
                 <button
@@ -73,13 +73,17 @@
                 <div class="flex items-center gap-3">
                     <div class="text-right hidden sm:block">
                         <p class="text-sm font-bold text-slate-900">Nguyễn Văn A</p>
-                        <p class="text-xs text-slate-500">B20DCCN001</p>
                     </div>
                     <div
                         class="size-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden">
                         <span class="material-symbols-outlined text-primary">person</span>
                     </div>
                 </div>
+                <a class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors flex items-center gap-1"
+                    href="#">
+                    <span class="material-symbols-outlined text-[20px]">logout</span>
+                    Đăng xuất
+                </a>
             </div>
         </header>
         <main class="flex-1 max-w-7xl mx-auto w-full px-4 lg:px-8 py-8">
@@ -315,19 +319,9 @@
                 </div>
             </div>
         </main>
-        <footer class="bg-white border-t border-slate-100 py-10 mt-12">
-            <div class="max-w-7xl mx-auto px-8 text-center">
-                <p class="text-slate-400 text-sm">© 2024 Học viện Công nghệ Bưu chính Viễn thông - Hệ thống Quiz Trực
-                    tuyến</p>
-                <div class="flex justify-center gap-6 mt-4">
-                    <a class="text-slate-400 hover:text-primary text-xs uppercase font-bold tracking-widest" href="#">Hỗ
-                        trợ</a>
-                    <a class="text-slate-400 hover:text-primary text-xs uppercase font-bold tracking-widest"
-                        href="#">Điều khoản</a>
-                    <a class="text-slate-400 hover:text-primary text-xs uppercase font-bold tracking-widest"
-                        href="#">Liên hệ</a>
-                </div>
-            </div>
+        <footer class="bg-white border-t border-slate-200 py-6 text-center mt-auto">
+            <p class="text-slate-500 text-sm font-medium">© 2024 Quiz Web PTIT - Phát triển bởi Học viện Công nghệ Bưu
+                chính Viễn thông</p>
         </footer>
     </div>
 </body>

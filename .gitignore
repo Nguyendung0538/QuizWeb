@@ -3,6 +3,10 @@
 .agents/
 next-prompt.md
 Muctieuweb.txt
+SITE.md
+DESIGN.md
+stitch.json
+skills-lock.json
 
 # Dependencies
 node_modules/
