@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#d41c34",
+            "background-light": "#f8f9fa",
+            "border-light": "#e2e8f0",
+            "background-dark": "#211113",
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+  <title>Admin - Xem chi tiết bài làm sinh viên | Quiz Web PTIT</title>
+</head>
+
+<body class="font-display bg-slate-50 text-slate-900 antialiased">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col z-20">
+      <div class="p-6 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+          <span class="material-symbols-outlined">school</span>
+        </div>
+        <div>
+          <h1 class="text-sm font-bold uppercase tracking-wider text-primary">Quiz PTIT</h1>
+          <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Hệ thống quản lý thi</p>
+        </div>
+      </div>
+      <nav class="flex-1 px-4 space-y-2 mt-4">
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          href="admin-dashboard.html">
+          <span class="material-symbols-outlined">description</span>
+          <span class="text-sm">Quản lý Kỳ thi</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary font-semibold transition-colors"
+          href="admin-students.html">
+          <span class="material-symbols-outlined">group</span>
+          <span class="text-sm">Quản lý Sinh viên</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          href="admin-statistics.html">
+          <span class="material-symbols-outlined">bar_chart</span>
+          <span class="text-sm">Thống kê &amp; Báo cáo</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          href="#">
+          <span class="material-symbols-outlined">settings</span>
+          <span class="text-sm">Cài đặt</span>
+        </a>
+      </nav>
+      <div class="p-6 border-t border-slate-100 dark:border-slate-800">
+        <div class="flex items-center gap-3 p-2">
+          <div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+            <img class="w-full h-full object-cover" data-alt="Avatar of the admin profile user"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH9UHGo00do-EHvn5gX1EkE7zWGP1ocqZ2y7THbqAkzV4K_uPatHeJdiOeYTi_A-4z7AHVuNir01SqAfhkkzZF1_nhQ1jfnY0K5eNaUMQK2hhVxgXi_-D3XqMKXFLm6o_zcCSzeaKRazF_jShiKHn0bloX5WYRaEwh8-LVSGBlIbWY408W9Epd12FnG5ZmMY1IA2CCdFpUqhysZK3zBUxQ7fY_T2arCr4nRZZRE3i6SwviqBHh61-TKCGGzDTDXv_4-nGKvhz4dki6" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold truncate">Nguyễn Văn A</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Administrator</p>
+          </div>
+          <span class="material-symbols-outlined text-slate-400">logout</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-auto">
+      <!-- Dashboard Content -->
+      <div class="p-8 max-w-5xl mx-auto w-full space-y-6">
+        <!-- Info Overview Card -->
+        <div
+          class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-slate-200 dark:divide-slate-800">
+          <div class="p-6 md:w-1/3 flex items-start gap-4">
+            <div
+              class="size-16 rounded-full bg-primary/10 flex flex-shrink-0 items-center justify-center text-primary font-bold text-2xl uppercase">
+              N
+            </div>
+            <div>
+              <h2 class="text-xl font-bold text-slate-900 mt-4">Nguyễn Văn A</h2>
+            </div>
+          </div>
+
+          <div class="p-6 md:w-2/3 grid grid-cols-2 lg:grid-cols-3 gap-6">
+            <div>
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Bài thi</p>
+              <p class="font-bold">Mạng máy tính</p>
+            </div>
+            <div>
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Kỳ thi</p>
+              <p class="font-bold">Giữa kỳ HK1</p>
+            </div>
+            <div>
+              <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Nộp bài lúc</p>
+              <p class="font-bold text-sm">10:45 AM, 12/10</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Final Score Card -->
+        <div
+          class="bg-primary rounded-xl shadow-lg relative overflow-hidden flex flex-col items-center justify-center py-10 px-6 text-white text-center">
+          <!-- Decorative patterns -->
+          <div class="absolute inset-0 opacity-10"
+            style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 24px 24px;">
+          </div>
+          <div class="absolute -right-20 -top-20 w-64 h-64 rounded-full border-[30px] border-white/10 blur-md"></div>
+          <div class="absolute -left-10 -bottom-10 w-40 h-40 rounded-full border-[20px] border-white/10 blur-sm">
+          </div>
+
+          <div class="relative z-10 flex flex-col items-center">
+            <span
+              class="px-4 py-1.5 rounded-full bg-white/20 text-white font-bold text-sm tracking-widest uppercase backdrop-blur-md mb-4 shadow-sm border border-white/20 text-center">TỔNG
+              ĐIỂM BÀI LÀM</span>
+            <div
+              class="text-7xl md:text-[100px] font-black leading-none drop-shadow-md tracking-tighter cursor-default">
+              9.5<span class="text-3xl md:text-5xl opacity-75 font-bold tracking-normal">/10</span>
+            </div>
+            <div
+              class="flex items-center gap-6 mt-8 p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
+              <div class="text-center px-4">
+                <p class="text-white/80 text-xs font-medium uppercase tracking-wider mb-1">ĐÚNG</p>
+                <p class="text-2xl font-bold">38 <span class="text-base font-normal opacity-70">/ 40</span></p>
+              </div>
+              <div class="w-px h-10 bg-white/30"></div>
+              <div class="text-center px-4">
+                <p class="text-white/80 text-xs font-medium uppercase tracking-wider mb-1">THỜI GIAN</p>
+                <p class="text-2xl font-bold">42 <span class="text-base font-normal opacity-70">phút</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Answers List -->
+        <div
+          class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-8">
+          <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+            <h3 class="text-lg font-bold">Chi tiết đáp án của sinh viên (40 câu)</h3>
+            <div class="flex items-center gap-3">
+              <span class="flex items-center gap-1.5 text-xs font-semibold text-emerald-600"><span
+                  class="size-3 rounded-full bg-emerald-500"></span> Câu đúng</span>
+              <span class="flex items-center gap-1.5 text-xs font-semibold text-red-600"><span
+                  class="size-3 rounded-full bg-red-500"></span> Câu sai</span>
+            </div>
+          </div>
+          <div class="p-6 space-y-8">
+
+            <!-- Question 1: Correct -->
+            <div class="p-5 rounded-xl border border-emerald-200 bg-emerald-50/30">
+              <div class="flex items-start gap-4">
+                <div
+                  class="size-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">
+                  1
+                </div>
+                <div class="flex-1 space-y-4">
+                  <h4 class="font-bold text-slate-800 leading-relaxed">
+                    Giao thức nào cung cấp dịch vụ phân giải tên miền thành địa chỉ IP?
+                  </h4>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="p-3 rounded-lg border border-slate-200 bg-white flex items-center gap-3">
+                      <span
+                        class="size-6 rounded-full border border-slate-300 flex items-center justify-center text-xs font-bold text-slate-500">A</span>
+                      <span class="text-sm">HTTP</span>
+                    </div>
+                    <div
+                      class="p-3 rounded-lg border-2 border-emerald-500 bg-emerald-50 flex items-center justify-between gap-3">
+                      <div class="flex items-center gap-3">
+                        <span
+                          class="size-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold">B</span>
+                        <span class="text-sm font-semibold text-emerald-900">DNS (Đáp án đúng & SV chọn)</span>
+                      </div>
+                      <span class="material-symbols-outlined text-emerald-500">check_circle</span>
+                    </div>
+                    <div class="p-3 rounded-lg border border-slate-200 bg-white flex items-center gap-3">
+                      <span
+                        class="size-6 rounded-full border border-slate-300 flex items-center justify-center text-xs font-bold text-slate-500">C</span>
+                      <span class="text-sm">FTP</span>
+                    </div>
+                    <div class="p-3 rounded-lg border border-slate-200 bg-white flex items-center gap-3">
+                      <span
+                        class="size-6 rounded-full border border-slate-300 flex items-center justify-center text-xs font-bold text-slate-500">D</span>
+                      <span class="text-sm">DHCP</span>
+                    </div>
+                  </div>
+                  <div class="p-3 bg-white border border-slate-100 rounded-lg text-sm text-slate-600">
+                    <span class="font-semibold text-slate-800">Giải thích:</span> DNS (Domain Name System) được sử
+                    dụng
+                    để chuyển đổi các tên miền dễ nhớ (như www.example.com) thành địa chỉ IP tương ứng mà máy tính sử
+                    dụng để định tuyến.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Question 2: Incorrect -->
+            <div class="p-5 rounded-xl border border-red-200 bg-red-50/30">
+              <div class="flex items-start gap-4">
+                <div
+                  class="size-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">
+                  2
+                </div>
+                <div class="flex-1 space-y-4">
+                  <h4 class="font-bold text-slate-800 leading-relaxed">
+                    Lớp Transport (Giao vận) trong mô hình OSI tương ứng với lớp nào trong mô hình TCP/IP?
+                  </h4>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="p-3 rounded-lg border border-slate-200 bg-white flex items-center gap-3">
+                      <span
+                        class="size-6 rounded-full border border-slate-300 flex items-center justify-center text-xs font-bold text-slate-500">A</span>
+                      <span class="text-sm">Network Access</span>
+                    </div>
+                    <div
+                      class="p-3 rounded-lg border-2 border-red-500 bg-red-50 flex items-center justify-between gap-3">
+                      <div class="flex items-center gap-3">
+                        <span
+                          class="size-6 rounded-full bg-red-500 text-white flex items-center justify-center text-xs font-bold">B</span>
+                        <span class="text-sm font-semibold text-red-900">Internet (SV chọn)</span>
+                      </div>
+                      <span class="material-symbols-outlined text-red-500">cancel</span>
+                    </div>
+                    <div
+                      class="p-3 rounded-lg border-2 border-emerald-500 bg-emerald-50 flex items-center justify-between gap-3 opacity-80">
+                      <div class="flex items-center gap-3">
+                        <span
+                          class="size-6 rounded-full border-2 border-emerald-500 text-emerald-600 flex items-center justify-center text-xs font-bold">C</span>
+                        <span class="text-sm font-semibold text-emerald-800">Transport (Đáp án đúng)</span>
+                      </div>
+                    </div>
+                    <div class="p-3 rounded-lg border border-slate-200 bg-white flex items-center gap-3">
+                      <span
+                        class="size-6 rounded-full border border-slate-300 flex items-center justify-center text-xs font-bold text-slate-500">D</span>
+                      <span class="text-sm">Application</span>
+                    </div>
+                  </div>
+                  <div class="p-3 bg-white border border-slate-100 rounded-lg text-sm text-slate-600">
+                    <span class="font-semibold text-slate-800">Giải thích:</span> Lớp Transport trong OSI và lớp
+                    Transport trong TCP/IP tương ứng trực tiếp với nhau, cung cấp dịch vụ giao vận đầu cuối.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</body>
+
+</html>

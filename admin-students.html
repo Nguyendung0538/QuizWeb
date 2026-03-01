@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#d41c34",
+            "background-light": "#f8f9fa",
+            "border-light": "#e2e8f0",
+            "background-dark": "#211113",
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+  <title>Admin - Quản lý Sinh viên | Quiz Web PTIT</title>
+</head>
+
+<body class="font-display bg-slate-50 text-slate-900 antialiased">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col z-20">
+      <div class="p-6 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+          <span class="material-symbols-outlined">school</span>
+        </div>
+        <div>
+          <h1 class="text-sm font-bold uppercase tracking-wider text-primary">Quiz PTIT</h1>
+          <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Hệ thống quản lý thi</p>
+        </div>
+      </div>
+      <nav class="flex-1 px-4 space-y-2 mt-4">
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          href="admin-dashboard.html">
+          <span class="material-symbols-outlined">description</span>
+          <span class="text-sm">Quản lý Kỳ thi</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary font-semibold transition-colors"
+          href="#">
+          <span class="material-symbols-outlined">group</span>
+          <span class="text-sm">Quản lý Sinh viên</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          href="#">
+          <span class="material-symbols-outlined">bar_chart</span>
+          <span class="text-sm">Thống kê &amp; Báo cáo</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          href="#">
+          <span class="material-symbols-outlined">settings</span>
+          <span class="text-sm">Cài đặt</span>
+        </a>
+      </nav>
+      <div class="p-6 border-t border-slate-100 dark:border-slate-800">
+        <div class="flex items-center gap-3 p-2">
+          <div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+            <img class="w-full h-full object-cover" data-alt="Avatar of the admin profile user"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH9UHGo00do-EHvn5gX1EkE7zWGP1ocqZ2y7THbqAkzV4K_uPatHeJdiOeYTi_A-4z7AHVuNir01SqAfhkkzZF1_nhQ1jfnY0K5eNaUMQK2hhVxgXi_-D3XqMKXFLm6o_zcCSzeaKRazF_jShiKHn0bloX5WYRaEwh8-LVSGBlIbWY408W9Epd12FnG5ZmMY1IA2CCdFpUqhysZK3zBUxQ7fY_T2arCr4nRZZRE3i6SwviqBHh61-TKCGGzDTDXv_4-nGKvhz4dki6" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold truncate">Nguyễn Văn A</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Administrator</p>
+          </div>
+          <span class="material-symbols-outlined text-slate-400">logout</span>
+        </div>
+      </div>
+    </aside>
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-auto">
+      <!-- Dashboard Content -->
+      <div class="p-8 max-w-7xl mx-auto w-full">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Quản lý Học viên</h2>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Danh sách, thông tin và hoạt động của tất cả
+              người dùng.</p>
+          </div>
+        </div>
+
+        <!-- Metrics Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div
+            class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <span class="material-symbols-outlined">group</span>
+            </div>
+            <div>
+              <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Tổng số học viên</p>
+              <p class="text-2xl font-bold">4,521</p>
+            </div>
+          </div>
+          <div
+            class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div class="size-12 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+              <span class="material-symbols-outlined">verified_user</span>
+            </div>
+            <div>
+              <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Đang hoạt động</p>
+              <p class="text-2xl font-bold">3,890</p>
+            </div>
+          </div>
+          <div
+            class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div class="size-12 rounded-lg bg-red-100 text-red-600 flex items-center justify-center">
+              <span class="material-symbols-outlined">block</span>
+            </div>
+            <div>
+              <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Bị khóa</p>
+              <p class="text-2xl font-bold">8</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Students Table List -->
+        <div
+          class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <!-- Filters & Search -->
+          <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="relative w-64">
+                <span
+                  class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+                <input
+                  class="w-full pl-10 pr-4 py-2 rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-primary focus:border-primary text-sm transition-all"
+                  placeholder="Tìm kiếm tên, email..." type="text" />
+              </div>
+              <select
+                class="rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-primary focus:border-primary">
+                <option>Tất cả trạng thái</option>
+                <option>Đang hoạt động</option>
+                <option>Bị khóa</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                <span class="material-symbols-outlined text-xl">filter_list</span>
+              </button>
+              <button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                <span class="material-symbols-outlined text-xl">more_vert</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr
+                  class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold border-b border-slate-200 dark:border-slate-800">
+                  <th class="px-6 py-4">
+                    <input type="checkbox" class="rounded border-slate-300 text-primary focus:ring-primary">
+                  </th>
+                  <th class="px-6 py-4">Họ và Tên</th>
+                  <th class="px-6 py-4">Email</th>
+                  <th class="px-6 py-4">Trạng thái</th>
+                  <th class="px-6 py-4 text-right">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                <!-- Student Row 1 -->
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                  <td class="px-6 py-4">
+                    <input type="checkbox" class="rounded border-slate-300 text-primary focus:ring-primary">
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs uppercase">
+                        N
+                      </div>
+                      <span class="font-medium text-sm">Nguyễn Văn A</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="text-sm text-slate-500">nva.b20dccn001@stu.ptit.edu.vn</div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-600">
+                      <span class="size-1.5 rounded-full bg-emerald-500"></span>
+                      Hoạt động
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-right">
+                    <div class="flex items-center justify-end gap-2">
+                      <button class="p-1.5 text-slate-400 hover:text-primary rounded transition-colors"
+                        title="Xem chi tiết điểm">
+                        <span class="material-symbols-outlined text-[20px]">analytics</span>
+                      </button>
+                      <button class="p-1.5 text-slate-400 hover:text-blue-500 rounded transition-colors"
+                        title="Chỉnh sửa">
+                        <span class="material-symbols-outlined text-[20px]">edit</span>
+                      </button>
+                      <button class="p-1.5 text-slate-400 hover:text-red-500 rounded transition-colors"
+                        title="Khóa/Xóa">
+                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- Student Row 2 -->
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                  <td class="px-6 py-4">
+                    <input type="checkbox" class="rounded border-slate-300 text-primary focus:ring-primary">
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="size-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs uppercase">
+                        T
+                      </div>
+                      <span class="font-medium text-sm">Trần Thị B</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="text-sm text-slate-500">ttb.b20dccn002@stu.ptit.edu.vn</div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-600">
+                      <span class="size-1.5 rounded-full bg-emerald-500"></span>
+                      Hoạt động
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-right">
+                    <div class="flex items-center justify-end gap-2">
+                      <button class="p-1.5 text-slate-400 hover:text-primary rounded transition-colors"
+                        title="Xem chi tiết điểm">
+                        <span class="material-symbols-outlined text-[20px]">analytics</span>
+                      </button>
+                      <button class="p-1.5 text-slate-400 hover:text-blue-500 rounded transition-colors"
+                        title="Chỉnh sửa">
+                        <span class="material-symbols-outlined text-[20px]">edit</span>
+                      </button>
+                      <button class="p-1.5 text-slate-400 hover:text-red-500 rounded transition-colors"
+                        title="Khóa/Xóa">
+                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- Student Row 3 -->
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors bg-red-50/30">
+                  <td class="px-6 py-4">
+                    <input type="checkbox" class="rounded border-slate-300 text-primary focus:ring-primary">
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="size-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-xs uppercase">
+                        L
+                      </div>
+                      <span class="font-medium text-sm text-slate-500">Lê Văn C</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="text-sm text-slate-400">lvc.b20dccn045@stu.ptit.edu.vn</div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
+                      <span class="size-1.5 rounded-full bg-slate-400"></span>
+                      Bị khóa
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-right">
+                    <div class="flex items-center justify-end gap-2">
+                      <button class="p-1.5 text-slate-400 hover:text-emerald-500 rounded transition-colors"
+                        title="Mở khóa">
+                        <span class="material-symbols-outlined text-[20px]">lock_open</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <p class="text-sm text-slate-500">Đang hiển thị <span class="font-medium text-slate-900">1-10</span> trong
+              số <span class="font-medium text-slate-900">4,521</span> sinh viên</p>
+            <div class="flex items-center gap-1">
+              <button
+                class="px-3 py-1.5 text-sm font-medium border border-slate-200 rounded-lg text-slate-400 cursor-not-allowed">Trước</button>
+              <button
+                class="w-8 h-8 flex items-center justify-center text-sm font-medium border border-primary bg-primary/10 text-primary rounded-lg">1</button>
+              <button
+                class="w-8 h-8 flex items-center justify-center text-sm font-medium border border-slate-200 text-slate-600 hover:border-primary hover:text-primary transition-colors rounded-lg">2</button>
+              <button
+                class="w-8 h-8 flex items-center justify-center text-sm font-medium border border-slate-200 text-slate-600 hover:border-primary hover:text-primary transition-colors rounded-lg">3</button>
+              <span class="px-2 text-slate-400">...</span>
+              <button
+                class="px-3 py-1.5 text-sm font-medium border border-slate-200 rounded-lg text-slate-600 hover:border-primary hover:text-primary transition-colors">Tiếp</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+
+</html>
