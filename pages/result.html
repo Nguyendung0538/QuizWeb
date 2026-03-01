@@ -44,7 +44,7 @@
                 <div class="h-8 w-[1px] bg-slate-200"></div>
                 <div class="flex items-center gap-3">
                     <div class="text-right hidden sm:block">
-                        <p class="text-sm font-bold text-slate-900">Nguyễn Văn A</p>
+                        <p id="studentName" class="text-sm font-bold text-slate-900">Người dùng</p>
                     </div>
                     <div
                         class="size-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden">
@@ -63,27 +63,27 @@
             <section class="mb-8">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
                     <div class="p-8 flex flex-col items-center text-center">
-                        <span
+                        <span id="examTitleDisplay"
                             class="px-4 py-1.5 rounded-full bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider mb-4">Kết
-                            quả bài thi: Mạng Máy Tính</span>
-                        <h2 class="text-5xl font-extrabold text-neutral-slate mb-6">8.5 <span
+                            quả bài thi: Đang tải...</span>
+                        <h2 id="scoreDisplay" class="text-5xl font-extrabold text-neutral-slate mb-6">-.- <span
                                 class="text-2xl text-slate-400 font-medium">/ 10 Điểm</span></h2>
                         <div
                             class="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full max-w-2xl border-t border-slate-50 pt-8">
                             <div class="flex flex-col items-center">
                                 <span class="material-symbols-outlined text-success mb-1">check_circle</span>
                                 <span class="text-slate-500 text-sm">Số câu đúng</span>
-                                <span class="text-lg font-bold text-success">34 / 40</span>
+                                <span id="correctCountDisplay" class="text-lg font-bold text-success">- / -</span>
                             </div>
                             <div class="flex flex-col items-center border-x border-slate-100">
                                 <span class="material-symbols-outlined text-error mb-1">cancel</span>
                                 <span class="text-slate-500 text-sm">Số câu sai</span>
-                                <span class="text-lg font-bold text-error">6 / 40</span>
+                                <span id="incorrectCountDisplay" class="text-lg font-bold text-error">- / -</span>
                             </div>
                             <div class="flex flex-col items-center">
                                 <span class="material-symbols-outlined text-slate-400 mb-1">schedule</span>
                                 <span class="text-slate-500 text-sm">Thời gian</span>
-                                <span class="text-lg font-bold text-slate-700">32 phút</span>
+                                <span id="timeSpentDisplay" class="text-lg font-bold text-slate-700">-- phút</span>
                             </div>
                         </div>
                     </div>
@@ -208,69 +208,8 @@
                             <span class="material-symbols-outlined text-slate-400">grid_view</span>
                             <h4 class="font-bold text-slate-800">Tổng quan câu hỏi</h4>
                         </div>
-                        <div class="grid grid-cols-5 gap-2 mb-8">
-                            <!-- Correct: success background -->
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer hover:scale-105 transition-transform">
-                                1</div>
-                            <div
-                                class="aspect-square bg-error text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer hover:scale-105 transition-transform">
-                                2</div>
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer hover:scale-105 transition-transform">
-                                3</div>
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer hover:scale-105 transition-transform">
-                                4</div>
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer hover:scale-105 transition-transform">
-                                5</div>
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer hover:scale-105 transition-transform">
-                                6</div>
-                            <div
-                                class="aspect-square bg-error text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer hover:scale-105 transition-transform">
-                                7</div>
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer hover:scale-105 transition-transform">
-                                8</div>
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer hover:scale-105 transition-transform">
-                                9</div>
-                            <div
-                                class="aspect-square bg-error text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer hover:scale-105 transition-transform">
-                                10</div>
-                            <!-- Continuing grid mockup -->
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer">
-                                11</div>
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer">
-                                12</div>
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer">
-                                13</div>
-                            <div
-                                class="aspect-square bg-error text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer">
-                                14</div>
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer">
-                                15</div>
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer">
-                                ...</div>
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer">
-                                37</div>
-                            <div
-                                class="aspect-square bg-error text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer">
-                                38</div>
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer">
-                                39</div>
-                            <div
-                                class="aspect-square bg-success text-white rounded flex items-center justify-center text-xs font-bold cursor-pointer">
-                                40</div>
+                        <div id="reviewPalette" class="grid grid-cols-5 gap-2 mb-8">
+                            <!-- JS Rendered -->
                         </div>
                         <div class="space-y-3 pt-6 border-t border-slate-50">
                             <div class="flex items-center gap-2">
@@ -296,6 +235,7 @@
                 chính Viễn thông</p>
         </footer>
     </div>
+    <script src="../assets/js/result.js"></script>
 </body>
 
 </html>

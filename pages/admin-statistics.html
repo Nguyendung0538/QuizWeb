@@ -11,7 +11,7 @@
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
     rel="stylesheet" />
   <script src="../assets/js/tailwind.config.js"></script>
-    <link href="../assets/css/style.css" rel="stylesheet" />
+  <link href="../assets/css/style.css" rel="stylesheet" />
   <!-- Thêm thư viện Chart.js để vẽ biểu đồ -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <title>Admin - Thống kê báo cáo | Quiz Web PTIT</title>
@@ -59,10 +59,10 @@
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH9UHGo00do-EHvn5gX1EkE7zWGP1ocqZ2y7THbqAkzV4K_uPatHeJdiOeYTi_A-4z7AHVuNir01SqAfhkkzZF1_nhQ1jfnY0K5eNaUMQK2hhVxgXi_-D3XqMKXFLm6o_zcCSzeaKRazF_jShiKHn0bloX5WYRaEwh8-LVSGBlIbWY408W9Epd12FnG5ZmMY1IA2CCdFpUqhysZK3zBUxQ7fY_T2arCr4nRZZRE3i6SwviqBHh61-TKCGGzDTDXv_4-nGKvhz4dki6" />
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold truncate">Nguyễn Văn A</p>
             <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Administrator</p>
           </div>
-          <span class="material-symbols-outlined text-slate-400">logout</span>
+          <a href="login.html"><span
+              class="material-symbols-outlined text-slate-400 hover:text-primary transition-colors cursor-pointer">logout</span></a>
         </div>
       </div>
     </aside>
@@ -101,10 +101,9 @@
               <span
                 class="material-symbols-outlined text-emerald-500 bg-emerald-50 p-1.5 rounded-lg text-lg">task_alt</span>
             </div>
-            <p class="text-3xl font-bold">12,450</p>
+            <p id="totalSubmissionsCount" class="text-3xl font-bold">...</p>
             <p class="text-xs text-emerald-600 font-medium mt-2 flex items-center gap-1">
               <span class="material-symbols-outlined text-[14px]">trending_up</span>
-              +15% so với tháng trước
             </p>
           </div>
 
@@ -114,8 +113,9 @@
               <p class="text-sm font-semibold text-slate-500">Điểm trung bình</p>
               <span class="material-symbols-outlined text-blue-500 bg-blue-50 p-1.5 rounded-lg text-lg">functions</span>
             </div>
-            <p class="text-3xl font-bold">7.8 <span class="text-lg text-slate-400 font-medium">/ 10</span></p>
-            <p class="text-xs text-slate-400 font-medium mt-2">Dựa trên 12,450 bài thi</p>
+            <p class="text-3xl font-bold"><span id="avgScoreText">...</span> <span
+                class="text-lg text-slate-400 font-medium">/ 10</span></p>
+            <p id="avgScoreSubtext" class="text-xs text-slate-400 font-medium mt-2">Đang tải...</p>
           </div>
         </div>
 
@@ -137,7 +137,7 @@
             <div class="w-full h-[250px] flex items-center justify-center relative">
               <canvas id="gradeDoughnut"></canvas>
               <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mb-4">
-                <span class="text-3xl font-bold text-slate-800">4,521</span>
+                <span id="totalStudentsChartCount" class="text-3xl font-bold text-slate-800">...</span>
                 <span class="text-xs text-slate-500 font-semibold uppercase">Tổng SV</span>
               </div>
             </div>
@@ -148,159 +148,44 @@
               </div>
               <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-400"></span>TB (5.0 - 6.9)
               </div>
-              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-500"></span>Yếu (<
-                  5.0)</div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-500"></span>Yếu (&lt; 5.0)
               </div>
             </div>
           </div>
-
-          <!-- Recent High Scores Table -->
-          <div
-            class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-8">
-            <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
-              <h3 class="text-lg font-bold">Lịch sử làm bài gần nhất</h3>
-              <button class="text-primary text-sm font-semibold hover:underline">Xem tất cả</button>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left border-collapse">
-                <thead>
-                  <tr
-                    class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold border-b border-slate-200 dark:border-slate-800">
-                    <th class="px-6 py-4">Sinh viên</th>
-                    <th class="px-6 py-4">Kỳ thi</th>
-                    <th class="px-6 py-4">Hoàn thành lúc</th>
-                    <th class="px-6 py-4">Thời gian làm bài</th>
-                    <th class="px-6 py-4 text-right">Điểm số</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
-                  <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4">
-                      <div class="flex items-center gap-3">
-                        <div
-                          class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs uppercase">
-                          D</div>
-                        <div>
-                          <p class="text-sm font-bold text-slate-900">Đào Thị D</p>
-                          <p class="text-xs text-slate-500">B21DCCN078</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="px-6 py-4 text-sm font-medium">Kiểm tra Giữa kỳ Mạng Máy Tính</td>
-                    <td class="px-6 py-4 text-sm text-slate-500">10:45 AM, 12/10/2023</td>
-                    <td class="px-6 py-4 text-sm font-medium">42 phút 15s</td>
-                    <td class="px-6 py-4 text-right">
-                      <span
-                        class="inline-flex items-center justify-center px-2 py-1 bg-emerald-100 text-emerald-700 font-bold rounded text-sm">9.5</span>
-                    </td>
-                  </tr>
-                  <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4">
-                      <div class="flex items-center gap-3">
-                        <div
-                          class="size-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs uppercase">
-                          H</div>
-                        <div>
-                          <p class="text-sm font-bold text-slate-900">Hoàng Văn H</p>
-                          <p class="text-xs text-slate-500">B20DCCN112</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="px-6 py-4 text-sm font-medium">Thi Cuối kỳ Cấu trúc Dữ liệu</td>
-                    <td class="px-6 py-4 text-sm text-slate-500">09:15 AM, 12/10/2023</td>
-                    <td class="px-6 py-4 text-sm font-medium">55 phút 02s</td>
-                    <td class="px-6 py-4 text-right">
-                      <span
-                        class="inline-flex items-center justify-center px-2 py-1 bg-emerald-100 text-emerald-700 font-bold rounded text-sm">10.0</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
         </div>
+
+        <!-- Recent High Scores Table -->
+        <div
+          class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-8">
+          <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+            <h3 class="text-lg font-bold">Lịch sử làm bài gần nhất</h3>
+            <button class="text-primary text-sm font-semibold hover:underline">Xem tất cả</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr
+                  class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold border-b border-slate-200 dark:border-slate-800">
+                  <th class="px-6 py-4">Sinh viên</th>
+                  <th class="px-6 py-4">Kỳ thi</th>
+                  <th class="px-6 py-4">Hoàn thành lúc</th>
+                  <th class="px-6 py-4">Thời gian làm bài</th>
+                  <th class="px-6 py-4 text-right">Điểm số</th>
+                </tr>
+              </thead>
+              <tbody id="recentHistoryTableBody" class="divide-y divide-slate-200 dark:divide-slate-800">
+                <!-- JS Render -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
     </main>
   </div>
 
   <!-- Script tạo biểu đồ -->
-  <script>
-    // Cấu hình chung cho Chart.js
-    Chart.defaults.font.family = "'Inter', sans-serif";
-    Chart.defaults.color = '#64748b'; // Tailwind slate-500
-
-    // 1. Vẽ biểu đồ Cột (Phổ điểm)
-    const ctxBar = document.getElementById('scoreHistogram').getContext('2d');
-    new Chart(ctxBar, {
-      type: 'bar',
-      data: {
-        labels: ['< 4.0', '4.0-5.0', '5.0-6.0', '6.0-7.0', '7.0-8.0', '8.0-9.0', '9.0-10'],
-        datasets: [{
-          label: 'Số lượng sinh viên',
-          data: [150, 420, 850, 2100, 4500, 3200, 1230],
-          backgroundColor: '#d41c34', // Tailwind primary
-          borderRadius: 4,
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            grid: { color: '#f1f5f9', borderDash: [5, 5] },
-            border: { display: false }
-          },
-          x: {
-            grid: { display: false },
-            border: { display: false }
-          }
-        }
-      }
-    });
-
-    // 2. Vẽ biểu đồ Tròn (Xếp loại)
-    const ctxDoughnut = document.getElementById('gradeDoughnut').getContext('2d');
-    new Chart(ctxDoughnut, {
-      type: 'doughnut',
-      data: {
-        labels: ['Giỏi', 'Khá', 'Trung bình', 'Yếu'],
-        datasets: [{
-          data: [1230, 4500 + 3200, 850 + 2100, 150 + 420], // Phân bổ giả lập
-          backgroundColor: [
-            '#10b981', // emerald-500
-            '#3b82f6', // blue-500
-            '#fbbf24', // amber-400
-            '#ef4444'  // red-500
-          ],
-          borderWidth: 0,
-          cutout: '75%'
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: function (context) {
-                let label = context.label || '';
-                if (label) { label += ': '; }
-                if (context.parsed !== null) {
-                  label += context.parsed + ' SV';
-                }
-                return label;
-              }
-            }
-          }
-        }
-      }
-    });
-  </script>
+  <script src="../assets/js/admin-statistics.js"></script>
 </body>
 
 </html>
