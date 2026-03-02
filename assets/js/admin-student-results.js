@@ -145,25 +145,40 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('modalStudentName').textContent = `Sinh viên: ${sub.studentName} (${sub.studentEmail})`;
 
     const scoreEl = document.getElementById('modalExamScore');
-    scoreEl.textContent = `${sub.score.toFixed(1)} / 10`;
+    let correctCount = sub.correctAnswers !== undefined ? sub.correctAnswers : (sub.answers ? sub.answers.filter(a => a.isCorrect).length : 0);
+    let totalQ = sub.totalQuestions || examMatch.questions.length;
+    if (sub.userAnswers && sub.correctAnswers === undefined) {
+      correctCount = examMatch.questions.reduce((count, q, idx) => count + (sub.userAnswers[idx] === q.correctOption ? 1 : 0), 0);
+    }
+    scoreEl.innerHTML = `${sub.score.toFixed(1)} / 10<br><span class="text-xs font-medium text-slate-500 mt-1 block">Đúng: ${correctCount}/${totalQ}</span>`;
     scoreEl.className = `text-xl font-bold ${sub.score >= 5 ? 'text-emerald-600' : 'text-red-600'}`;
 
     const container = document.getElementById('questionsDetailContainer');
     let html = '';
 
     examMatch.questions.forEach((q, index) => {
-      // Find student's answer for this question
-      let studentAns = sub.answers ? sub.answers.find(a => a.questionId === q.id) : null;
-      let selectedOptIndex = studentAns ? studentAns.selectedOption : -1;
+      let selectedOptIndex = -1;
+      if (sub.answers) {
+        let studentAns = sub.answers.find(a => a.questionId === q.id);
+        if (studentAns) selectedOptIndex = studentAns.selectedOption;
+      } else if (sub.userAnswers) {
+        selectedOptIndex = sub.userAnswers[index] !== null && sub.userAnswers[index] !== undefined ? sub.userAnswers[index] : -1;
+      }
       let isCorrect = selectedOptIndex === q.correctOption;
 
       let bgColor = isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-red-50/50 border-red-200';
       if (selectedOptIndex === -1) bgColor = 'bg-slate-50 border-slate-200'; // Unanswered
 
-      let icon = isCorrect
-        ? '<span class="material-symbols-outlined text-emerald-500">check_circle</span>'
-        : '<span class="material-symbols-outlined text-red-500">cancel</span>';
-      if (selectedOptIndex === -1) icon = '<span class="material-symbols-outlined text-slate-400">help</span>';
+      let badgeHtml = isCorrect
+        ? '<span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">check</span> Chấm đúng</span>'
+        : '<span class="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">close</span> Chọn sai</span>';
+
+      let textClass = 'text-slate-800';
+
+      if (selectedOptIndex === -1) {
+        badgeHtml = '<span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded flex items-center gap-1 border border-amber-200"><span class="material-symbols-outlined text-[14px]">horizontal_rule</span> Chưa chọn đáp án</span>';
+        textClass = 'text-amber-700';
+      }
 
       html += `
                 <div class="p-6 rounded-xl border ${bgColor} shadow-sm bg-white dark:bg-slate-900">
@@ -173,8 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="flex-1">
                             <div class="flex items-start justify-between gap-4 mb-4">
-                                <h4 class="font-bold text-slate-800 text-base leading-relaxed">${q.text}</h4>
-                                <div class="shrink-0 mt-0.5">${icon}</div>
+                                <h4 class="font-bold ${textClass} text-base leading-relaxed">${q.text}</h4>
+                                <div class="shrink-0 mt-0.5">${badgeHtml}</div>
                             </div>
                             
                             <div class="space-y-2">
@@ -183,20 +198,23 @@ document.addEventListener('DOMContentLoaded', () => {
       q.options.forEach((opt, optIdx) => {
         let optBg = 'bg-slate-50 border-slate-200 text-slate-600';
         let checkIcon = '';
+        let labelText = opt;
 
         if (optIdx === q.correctOption) {
           optBg = 'bg-emerald-500 text-white border-emerald-500 font-medium'; // Correct answer is solid green
           checkIcon = '<span class="material-symbols-outlined text-[16px]">done</span>';
+          if (optIdx === selectedOptIndex) {
+            labelText = opt + ' <span class="text-emerald-100 text-xs ml-1">(Đã chọn)</span>';
+          }
         } else if (optIdx === selectedOptIndex && selectedOptIndex !== q.correctOption) {
           optBg = 'bg-red-100 text-red-700 border-red-200 font-medium line-through decoration-red-400'; // Wrong selected answer is red and struck through
           checkIcon = '<span class="material-symbols-outlined text-[16px]">close</span>';
-        } else if (optIdx === selectedOptIndex && selectedOptIndex === q.correctOption) {
-          // Correctly selected, already handled by solid green above.
+          labelText = opt + ' <span class="text-red-500 text-xs ml-1">(Đã chọn)</span>';
         }
 
         html += `
                     <div class="flex items-center justify-between p-3 rounded-lg border ${optBg} transition-all">
-                        <span class="text-sm">${opt}</span>
+                        <span class="text-sm">${labelText}</span>
                         ${checkIcon}
                     </div>
                 `;

@@ -18,6 +18,13 @@
 </head>
 
 <body class="font-display bg-slate-50 text-slate-900 antialiased">
+  <script>
+    // Immediate Admin Auth Check
+    const currentUser = JSON.parse(localStorage.getItem('quiz_current_user'));
+    if (!currentUser || currentUser.role !== 'admin') {
+      window.location.href = 'login.html';
+    }
+  </script>
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
     <aside class="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col z-20">
@@ -46,26 +53,21 @@
           <span class="material-symbols-outlined">bar_chart</span>
           <span class="text-sm">Thống kê &amp; Báo cáo</span>
         </a>
-        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          href="#">
-          <span class="material-symbols-outlined">settings</span>
-          <span class="text-sm">Cài đặt</span>
-        </a>
       </nav>
-      <div class="p-6 border-t border-slate-100 dark:border-slate-800">
-        <div class="flex items-center gap-3 p-2">
-          <div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-            <img class="w-full h-full object-cover" data-alt="Avatar of the admin profile user"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH9UHGo00do-EHvn5gX1EkE7zWGP1ocqZ2y7THbqAkzV4K_uPatHeJdiOeYTi_A-4z7AHVuNir01SqAfhkkzZF1_nhQ1jfnY0K5eNaUMQK2hhVxgXi_-D3XqMKXFLm6o_zcCSzeaKRazF_jShiKHn0bloX5WYRaEwh8-LVSGBlIbWY408W9Epd12FnG5ZmMY1IA2CCdFpUqhysZK3zBUxQ7fY_T2arCr4nRZZRE3i6SwviqBHh61-TKCGGzDTDXv_4-nGKvhz4dki6" />
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Administrator</p>
-          </div>
-          <a href="login.html"><span
-              class="material-symbols-outlined text-slate-400 hover:text-primary transition-colors cursor-pointer">logout</span></a>
-        </div>
+      <div class="px-6 pb-6 mt-auto">
+        <button id="adminLogoutBtn"
+          class="flex w-full items-center justify-center gap-3 px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500 font-semibold transition-colors">
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          <span>Đăng xuất</span>
+        </button>
       </div>
     </aside>
+    <script>
+      document.getElementById('adminLogoutBtn')?.addEventListener('click', () => {
+        localStorage.removeItem('quiz_current_user');
+        window.location.href = 'login.html';
+      });
+    </script>
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col min-w-0 overflow-auto">
@@ -130,7 +132,7 @@
           <!-- Doughnut Chart -->
           <div
             class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-            <h3 class="text-lg font-bold mb-6">Xếp loại sinh viên</h3>
+            <h3 class="text-lg font-bold mb-6">Xếp loại</h3>
             <div class="w-full h-[250px] flex items-center justify-center relative">
               <canvas id="gradeDoughnut"></canvas>
               <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mb-4">

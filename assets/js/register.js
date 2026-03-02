@@ -79,10 +79,57 @@ document.addEventListener('DOMContentLoaded', () => {
           users.push(newUser);
           localStorage.setItem('quiz_users', JSON.stringify(users));
 
-          alert('Đăng ký tài khoản thành công! Lần tới bạn có thể sử dụng email để đăng nhập.');
-          window.location.href = 'login.html';
+          showCustomAlert('Đăng ký tài khoản thành công! Lần tới bạn có thể sử dụng email để đăng nhập.', () => {
+            window.location.href = 'login.html';
+          });
         }
       }
     });
+  }
+
+  // Custom Alert Modal logic
+  const customAlertModal = document.getElementById('customAlertModal');
+  const customAlertModalOverlay = document.getElementById('customAlertModalOverlay');
+  const customAlertModalContent = document.getElementById('customAlertModalContent');
+  const customAlertMessage = document.getElementById('customAlertMessage');
+  let alertCloseCallback = null;
+
+  document.querySelectorAll('.custom-alert-close').forEach(btn => {
+    btn.addEventListener('click', closeCustomAlert);
+  });
+
+  function showCustomAlert(msg, callback = null) {
+    if (!customAlertModal) {
+      alert(msg); // fallback
+      if (callback) callback();
+      return;
+    }
+
+    alertCloseCallback = callback;
+    customAlertMessage.textContent = msg;
+
+    customAlertModal.classList.remove('hidden');
+    // Force reflow
+    void customAlertModal.offsetWidth;
+
+    customAlertModalOverlay.classList.remove('opacity-0');
+    customAlertModalContent.classList.remove('opacity-0', 'scale-95');
+    customAlertModalContent.classList.add('scale-100');
+  }
+
+  function closeCustomAlert() {
+    if (!customAlertModal) return;
+
+    customAlertModalOverlay.classList.add('opacity-0');
+    customAlertModalContent.classList.remove('scale-100');
+    customAlertModalContent.classList.add('opacity-0', 'scale-95');
+
+    setTimeout(() => {
+      customAlertModal.classList.add('hidden');
+      if (alertCloseCallback) {
+        alertCloseCallback();
+        alertCloseCallback = null;
+      }
+    }, 300);
   }
 });

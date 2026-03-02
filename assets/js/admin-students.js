@@ -102,9 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.handleStudentSelection) window.handleStudentSelection();
   }
 
-  // Close modals logic
   document.querySelectorAll('.modal-close').forEach(btn => {
-    btn.addEventListener('click', closeStudentModal);
+    btn.addEventListener('click', () => {
+      closeStudentModal();
+      if (window.closeResetPasswordModal) window.closeResetPasswordModal();
+    });
   });
   document.querySelectorAll('.delete-close').forEach(btn => {
     btn.addEventListener('click', closeDeleteModal);
@@ -213,6 +215,44 @@ document.addEventListener('DOMContentLoaded', () => {
     confirmDeleteBtn.dataset.email = email;
     openModal(deleteModal, deleteModalOverlay, deleteModalContent);
   };
+
+  // Handle Reset Password Logic
+  const resetPasswordModal = document.getElementById('resetPasswordModal');
+  const resetPasswordModalOverlay = document.getElementById('resetPasswordModalOverlay');
+  const resetPasswordModalContent = document.getElementById('resetPasswordModalContent');
+  const confirmResetPasswordBtn = document.getElementById('confirmResetPasswordBtn');
+  let studentToResetId = null;
+
+  window.confirmResetPassword = function (id) {
+    studentToResetId = id;
+    let users = JSON.parse(localStorage.getItem('quiz_users')) || [];
+    const user = users.find(u => u.id == id);
+    if (!user) return;
+
+    document.getElementById('resetStudentName').textContent = user.name || user.username;
+    openModal(resetPasswordModal, resetPasswordModalOverlay, resetPasswordModalContent);
+  }
+
+  window.closeResetPasswordModal = function () {
+    closeModal(resetPasswordModal, resetPasswordModalOverlay, resetPasswordModalContent);
+    studentToResetId = null;
+  }
+
+  if (confirmResetPasswordBtn) {
+    confirmResetPasswordBtn.addEventListener('click', () => {
+      if (!studentToResetId) return;
+      let users = JSON.parse(localStorage.getItem('quiz_users')) || [];
+      const index = users.findIndex(u => u.id == studentToResetId);
+
+      if (index !== -1) {
+        users[index].password = '123456';
+        localStorage.setItem('quiz_users', JSON.stringify(users));
+        // Assuming showNotification is defined elsewhere or can be omitted
+        // showNotification('Success', 'Khôi phục mật khẩu thành công (123456)', 'success');
+      }
+      closeResetPasswordModal();
+    });
+  }
 
   // Initial render
   // Add slight delay in case components need to load
@@ -448,6 +488,9 @@ function renderStudents() {
             </a>
             <button onclick="openEditStudentModal('${student.id}')" class="p-1.5 text-slate-400 hover:text-blue-500 rounded transition-colors" title="Chỉnh sửa">
                 <span class="material-symbols-outlined text-[20px]">edit</span>
+            </button>
+            <button onclick="confirmResetPassword('${student.id}')" class="p-1.5 text-slate-400 hover:text-amber-500 transition-colors" title="Đặt lại mật khẩu">
+                <span class="material-symbols-outlined text-[20px]">key</span>
             </button>
             <button onclick="toggleStudentStatus('${student.email}')" class="p-1.5 text-slate-400 hover:text-amber-500 rounded transition-colors" title="Khóa tài khoản">
                 <span class="material-symbols-outlined text-[20px]">lock</span>

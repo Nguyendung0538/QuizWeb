@@ -20,6 +20,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // --- Forgot Password Modal Logic ---
+  const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+  const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+  const forgotPasswordOverlay = document.getElementById('forgotPasswordOverlay');
+  const forgotPasswordContent = document.getElementById('forgotPasswordContent');
+  const closeForgotBtn = document.getElementById('closeForgotBtn');
+
+  function openForgotModal() {
+    forgotPasswordModal.classList.remove('hidden');
+    forgotPasswordModal.classList.add('flex');
+    // Trigger animation
+    setTimeout(() => {
+      forgotPasswordOverlay.classList.remove('opacity-0');
+      forgotPasswordContent.classList.remove('opacity-0', 'scale-95');
+      forgotPasswordContent.classList.add('opacity-100', 'scale-100');
+    }, 10);
+  }
+
+  function closeForgotModal() {
+    forgotPasswordOverlay.classList.add('opacity-0');
+    forgotPasswordContent.classList.add('opacity-0', 'scale-95');
+    forgotPasswordContent.classList.remove('opacity-100', 'scale-100');
+    // Hide after animation completes
+    setTimeout(() => {
+      forgotPasswordModal.classList.add('hidden');
+      forgotPasswordModal.classList.remove('flex');
+    }, 300);
+  }
+
+  if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      openForgotModal();
+    });
+  }
+
+  if (closeForgotBtn) closeForgotBtn.addEventListener('click', closeForgotModal);
+  if (forgotPasswordOverlay) forgotPasswordOverlay.addEventListener('click', closeForgotModal);
+  // ------------------------------------
+
   // Logic Submittion & Validation
   if (loginForm) {
     loginForm.addEventListener('submit', (e) => {

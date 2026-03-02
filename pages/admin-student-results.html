@@ -14,6 +14,13 @@
 </head>
 
 <body class="font-display bg-slate-50 text-slate-900 antialiased">
+  <script>
+    // Immediate Admin Auth Check
+    const currentUser = JSON.parse(localStorage.getItem('quiz_current_user'));
+    if (!currentUser || currentUser.role !== 'admin') {
+      window.location.href = 'login.html';
+    }
+  </script>
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
     <aside class="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col z-20">
@@ -42,11 +49,6 @@
           <span class="material-symbols-outlined">bar_chart</span>
           <span class="text-sm">Thống kê &amp; Báo cáo</span>
         </a>
-        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          href="#">
-          <span class="material-symbols-outlined">settings</span>
-          <span class="text-sm">Cài đặt</span>
-        </a>
       </nav>
       <div class="p-6 border-t border-slate-100 dark:border-slate-800">
         <div class="flex items-center gap-3 p-2">
@@ -57,11 +59,19 @@
           <div class="flex-1 min-w-0">
             <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Administrator</p>
           </div>
-          <a href="login.html"><span
-              class="material-symbols-outlined text-slate-400 hover:text-primary transition-colors cursor-pointer">logout</span></a>
+          <button id="adminLogoutBtn" class="flex items-center">
+            <span
+              class="material-symbols-outlined text-slate-400 hover:text-primary transition-colors cursor-pointer">logout</span>
+          </button>
         </div>
       </div>
     </aside>
+    <script>
+      document.getElementById('adminLogoutBtn')?.addEventListener('click', () => {
+        localStorage.removeItem('quiz_current_user');
+        window.location.href = 'login.html';
+      });
+    </script>
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col min-w-0 overflow-auto">

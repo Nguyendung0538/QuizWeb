@@ -66,7 +66,8 @@
                                         <span class="material-symbols-outlined text-sm">lock</span>
                                         Mật khẩu
                                     </label>
-                                    <a class="text-primary text-xs font-medium hover:underline" href="#">Quên mật
+                                    <a id="forgotPasswordLink"
+                                        class="text-primary text-xs font-medium hover:underline cursor-pointer">Quên mật
                                         khẩu?</a>
                                 </div>
                                 <div class="relative">
@@ -113,6 +114,42 @@
         </div>
     </div>
 
+    <!-- Forgot Password Modal (Dog Alo Alo) -->
+    <div id="forgotPasswordModal" class="fixed inset-0 z-[100] hidden items-center justify-center">
+        <!-- Overlay -->
+        <div id="forgotPasswordOverlay"
+            class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity opacity-0"></div>
+
+        <!-- Modal Content -->
+        <div id="forgotPasswordContent"
+            class="relative bg-white rounded-2xl shadow-xl w-[90%] max-w-sm overflow-hidden transform scale-95 opacity-0 transition-all duration-300">
+
+            <div class="p-6 text-center">
+                <!-- Close Button -->
+                <button id="closeForgotBtn"
+                    class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+
+                <h3 class="text-2xl font-black text-slate-800 mb-2 mt-4 tracking-tight">Cảnh báo !!</h3>
+                <p class="text-slate-600 mb-6 font-medium">Bảo mật cực nghiêm ngặt !!!</p>
+
+                <!-- Dog Image -->
+                <div class="bg-slate-100 rounded-xl overflow-hidden mb-6 mx-auto border-4 border-slate-200">
+                    <img src="../assets/img/dog-alo-alo.png" alt="Dog Alo Alo"
+                        class="w-full h-auto object-cover max-h-48" />
+                </div>
+
+                <h2 class="text-3xl font-black text-primary mb-4 animate-bounce">👉 ASK ADMIN 👈</h2>
+
+                <p class="text-xs text-slate-400 font-medium italic">
+                    (Vui lòng liên hệ Admin để xin cấp lại mật khẩu mới. Xin cảm ơn!)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
     <script src="../assets/js/login.js"></script>
 </body>
 

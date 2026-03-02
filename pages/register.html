@@ -119,6 +119,29 @@
         </div>
 
         <script src="../assets/js/register.js"></script>
+
+        <!-- Custom Alert Modal -->
+        <div id="customAlertModal" class="fixed inset-0 z-[100] hidden">
+            <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm custom-alert-close transition-opacity opacity-0"
+                id="customAlertModalOverlay"></div>
+
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-white rounded-xl shadow-2xl p-6 text-center scale-95 opacity-0 transition-all duration-300"
+                id="customAlertModalContent">
+                <div
+                    class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-500 mx-auto flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-3xl">check_circle</span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Thành công!</h3>
+                <p id="customAlertMessage" class="text-sm text-slate-500 border-b border-slate-100 pb-6 mb-6">
+                    <!-- Nội dung thông báo -->
+                </p>
+
+                <button type="button"
+                    class="custom-alert-close w-full py-2.5 bg-primary text-white font-semibold text-sm rounded-lg hover:bg-primary/90 shadow-md shadow-primary/20 transition-all">
+                    Đã hiểu
+                </button>
+            </div>
+        </div>
 </body>
 
 </html>

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Check Auth 
-  const currentUser = JSON.parse(sessionStorage.getItem('quiz_current_user'));
+  const currentUser = JSON.parse(localStorage.getItem('quiz_current_user'));
   if (!currentUser) {
     window.location.href = 'login.html';
     return;
@@ -49,6 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const submitBtns = document.querySelectorAll('.submit-exam-btn');
   const answeredCountEl = document.getElementById('answeredCount');
 
+  // Modal Elements
+  const confirmSubmitModal = document.getElementById('confirmSubmitModal');
+  const confirmSubmitOverlay = document.getElementById('confirmSubmitOverlay');
+  const confirmSubmitContent = document.getElementById('confirmSubmitContent');
+  const confirmSubmitMessage = document.getElementById('confirmSubmitMessage');
+  const cancelSubmitBtn = document.getElementById('cancelSubmitBtn');
+  const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
+
   // Setup Header
   if (titleEl) titleEl.textContent = `Bài thi: ${exam.title}`;
 
@@ -77,7 +85,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  submitBtns.forEach(btn => btn.addEventListener('click', submitExam));
+  submitBtns.forEach(btn => btn.addEventListener('click', () => showConfirmModal(false)));
+
+  if (cancelSubmitBtn) cancelSubmitBtn.addEventListener('click', hideConfirmModal);
+  if (confirmSubmitBtn) confirmSubmitBtn.addEventListener('click', () => {
+    hideConfirmModal();
+    processSubmission();
+  });
+
+  function showConfirmModal(isAuto) {
+    if (isAuto) {
+      processSubmission();
+      return;
+    }
+    const answeredCount = answers.filter(a => a !== null).length;
+    if (answeredCount < questions.length) {
+      confirmSubmitMessage.textContent = `Bạn mới làm ${answeredCount}/${questions.length} câu. Bạn có chắc chắn muốn nộp bài?`;
+    } else {
+      confirmSubmitMessage.textContent = 'Bạn đã hoàn thành tất cả câu hỏi. Bạn có muốn nộp bài ngay bây giờ?';
+    }
+
+    if (confirmSubmitModal) {
+      confirmSubmitModal.classList.remove('hidden');
+      void confirmSubmitModal.offsetWidth;
+      confirmSubmitOverlay.classList.remove('opacity-0');
+      confirmSubmitContent.classList.remove('opacity-0', 'scale-95');
+      confirmSubmitContent.classList.add('scale-100');
+    } else {
+      // Fallback
+      if (confirm(confirmSubmitMessage.textContent)) {
+        processSubmission();
+      }
+    }
+  }
+
+  function hideConfirmModal() {
+    if (!confirmSubmitModal) return;
+    confirmSubmitOverlay.classList.add('opacity-0');
+    confirmSubmitContent.classList.remove('scale-100');
+    confirmSubmitContent.classList.add('opacity-0', 'scale-95');
+    setTimeout(() => confirmSubmitModal.classList.add('hidden'), 300);
+  }
 
   function startTimer() {
     if (timerInterval) clearInterval(timerInterval);
@@ -99,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (timeRemaining <= 0) {
         clearInterval(timerInterval);
         alert('Hết giờ làm bài! Hệ thống sẽ tự động nộp bài.');
-        submitExam(true); // true = auto submit
+        processSubmission();
       }
     }, 1000);
   }
@@ -199,14 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function submitExam(isAuto = false) {
-    const answeredCount = answers.filter(a => a !== null).length;
-
-    if (!isAuto && answeredCount < questions.length) {
-      const confirmSubmit = confirm(`Bạn mới làm ${answeredCount}/${questions.length} câu. Bạn có chắc chắn muốn nộp bài?`);
-      if (!confirmSubmit) return;
-    }
-
+  function processSubmission() {
     clearInterval(timerInterval);
 
     // Calculate score
@@ -230,6 +271,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const now = new Date();
     const formattedDate = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} ${now.getHours() >= 12 ? 'PM' : 'AM'}, ${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear()}`;
 
+    // Structure Answers
+    const structuredAnswers = questions.map((q, index) => ({
+      questionId: q.id,
+      selectedOption: answers[index] !== null && answers[index] !== undefined ? answers[index] : -1,
+      isCorrect: answers[index] === q.correctOption
+    }));
+
     // Create Submission Record
     const submissions = JSON.parse(localStorage.getItem('quiz_submissions')) || [];
     const newSubmission = {
@@ -244,7 +292,8 @@ document.addEventListener('DOMContentLoaded', () => {
       totalQuestions: questions.length,
       timeSpent: formattedTimeSpent,
       submittedAt: formattedDate,
-      userAnswers: answers // Store specific answers if review is needed
+      userAnswers: answers, // For fallback
+      answers: structuredAnswers
     };
 
     submissions.push(newSubmission);
@@ -253,9 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save to current session so the results page can load it immediately
     sessionStorage.setItem('last_submission_id', newSubmission.id);
 
-    alert(`Đã nộp bài thành công! Điểm của bạn: ${score.toFixed(1)}`);
-
-    // Redirect to result page
+    // Redirect to result page directly without alert
     window.location.href = 'result.html';
   }
 });

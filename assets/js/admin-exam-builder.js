@@ -182,11 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (!isPermanent) {
-      if (!startTime || !endTime) {
-        showCustomAlert('Vui lòng chọn đầy đủ thời gian bắt đầu và kết thúc!');
-        return;
-      }
-      if (new Date(endTime) <= new Date(startTime)) {
+      if (startTime && endTime && new Date(endTime) <= new Date(startTime)) {
         showCustomAlert('Thời gian kết thúc phải sau thời gian bắt đầu!');
         return;
       }
