@@ -105,6 +105,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.modal-close').forEach(btn => {
     btn.addEventListener('click', () => {
       closeStudentModal();
+    });
+  });
+
+  document.querySelectorAll('.reset-modal-close').forEach(btn => {
+    btn.addEventListener('click', () => {
       if (window.closeResetPasswordModal) window.closeResetPasswordModal();
     });
   });
@@ -123,6 +128,12 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('studentName').value = '';
       document.getElementById('studentEmail').value = '';
       document.getElementById('studentEmail').disabled = false;
+
+      const resetBtn = document.getElementById('resetPasswordBtnInModal');
+      if (resetBtn) {
+        resetBtn.classList.add('hidden');
+      }
+
       openModal(studentModal, studentModalOverlay, studentModalContent);
     });
   }
@@ -206,6 +217,17 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('studentName').value = student.name;
       document.getElementById('studentEmail').value = student.email;
       document.getElementById('studentEmail').disabled = true; // prevent changing email
+
+      const resetBtn = document.getElementById('resetPasswordBtnInModal');
+      if (resetBtn) {
+        resetBtn.classList.remove('hidden');
+        resetBtn.onclick = function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          confirmResetPassword(student.id);
+        };
+      }
+
       openModal(studentModal, studentModalOverlay, studentModalContent);
     }
   };
@@ -230,11 +252,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!user) return;
 
     document.getElementById('resetStudentName').textContent = user.name || user.username;
+
+    // Explicitly handle z-index and pointer events for this specific modal
+    resetPasswordModalOverlay.classList.remove('pointer-events-none');
+
     openModal(resetPasswordModal, resetPasswordModalOverlay, resetPasswordModalContent);
   }
 
   window.closeResetPasswordModal = function () {
     closeModal(resetPasswordModal, resetPasswordModalOverlay, resetPasswordModalContent);
+    setTimeout(() => {
+      resetPasswordModalOverlay.classList.add('pointer-events-none');
+    }, 300);
     studentToResetId = null;
   }
 
@@ -247,8 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (index !== -1) {
         users[index].password = '123456';
         localStorage.setItem('quiz_users', JSON.stringify(users));
-        // Assuming showNotification is defined elsewhere or can be omitted
-        // showNotification('Success', 'Khôi phục mật khẩu thành công (123456)', 'success');
+        alert('Khôi phục mật khẩu thành công! Mật khẩu mới là: 123456');
       }
       closeResetPasswordModal();
     });
@@ -488,9 +516,6 @@ function renderStudents() {
             </a>
             <button onclick="openEditStudentModal('${student.id}')" class="p-1.5 text-slate-400 hover:text-blue-500 rounded transition-colors" title="Chỉnh sửa">
                 <span class="material-symbols-outlined text-[20px]">edit</span>
-            </button>
-            <button onclick="confirmResetPassword('${student.id}')" class="p-1.5 text-slate-400 hover:text-amber-500 transition-colors" title="Đặt lại mật khẩu">
-                <span class="material-symbols-outlined text-[20px]">key</span>
             </button>
             <button onclick="toggleStudentStatus('${student.email}')" class="p-1.5 text-slate-400 hover:text-amber-500 rounded transition-colors" title="Khóa tài khoản">
                 <span class="material-symbols-outlined text-[20px]">lock</span>

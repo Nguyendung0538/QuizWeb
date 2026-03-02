@@ -1,4 +1,9 @@
-tailwind.config = {
+module.exports = {
+  content: [
+    "./*.html",
+    "./pages/**/*.html",
+    "./assets/js/**/*.js"
+  ],
   darkMode: "class",
   theme: {
     extend: {
@@ -14,4 +19,8 @@ tailwind.config = {
       borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
     },
   },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/container-queries'),
+  ],
 };

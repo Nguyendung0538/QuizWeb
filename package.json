@@ -1,0 +1,29 @@
+{
+  "name": "quizweb",
+  "version": "1.0.0",
+  "description": "��L\u0000m\u0000a\u0000o\u0000",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "npx tailwindcss -i ./assets/css/input.css -o ./assets/css/style.css --minify",
+    "watch:css": "npx tailwindcss -i ./assets/css/input.css -o ./assets/css/style.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nguyendung0538/QuizWeb.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Nguyendung0538/QuizWeb/issues"
+  },
+  "homepage": "https://github.com/Nguyendung0538/QuizWeb#readme",
+  "devDependencies": {
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.11",
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19"
+  }
+}
