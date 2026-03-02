@@ -255,7 +255,7 @@
           <div class="pt-6 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 mt-6">
             <div>
               <button type="button" id="resetPasswordBtnInModal"
-                class="hidden px-4 py-2.5 bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-500/20 dark:text-amber-400 dark:hover:bg-amber-500/30 font-semibold text-sm rounded-lg transition-all flex items-center gap-2">
+                class="hidden px-4 py-2.5 bg-primary/10 text-primary hover:bg-primary/20 font-semibold text-sm rounded-lg transition-all flex items-center gap-2">
                 <span class="material-symbols-outlined text-[18px]">key</span>
                 Đặt lại mật khẩu
               </button>
@@ -366,10 +366,33 @@
             class="reset-modal-close px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
             type="button">Hủy</button>
           <button id="confirmResetPasswordBtn"
-            class="px-5 py-2.5 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition-colors shadow-sm"
-            type="button">Xác nhận Đặt lại</button>
+            class="px-5 py-2.5 text-sm font-semibold rounded-lg transition-colors shadow-sm"
+            style="background-color: #d41c34; color: white;" type="button">Xác nhận Đặt lại</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Success Notification Modal -->
+  <div id="successModal" class="fixed inset-0 hidden" style="z-index: 9999;">
+    <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm success-modal-close transition-opacity opacity-0"
+      id="successModalOverlay"></div>
+    <div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-6 text-center scale-95 opacity-0 transition-all duration-300 border border-slate-100 dark:border-slate-800"
+      id="successModalContent">
+      <div
+        class="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 mx-auto flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-3xl">check_circle</span>
+      </div>
+      <h3 id="successModalTitle" class="text-xl font-bold text-slate-900 dark:text-white mb-2">Thành công!</h3>
+      <p id="successModalMessage" class="text-sm text-slate-500 dark:text-slate-400 mb-6">
+        Mật khẩu đã được đặt lại thành công.
+      </p>
+      <button type="button"
+        class="success-modal-close w-full py-3 font-bold rounded-xl shadow-lg transition-all active:scale-[0.98]"
+        style="background-color: #d41c34; color: white;">
+        Đóng
+      </button>
     </div>
   </div>
 

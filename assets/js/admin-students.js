@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         // Create
         if (users.some(u => u.email === email)) {
-          alert('Email này đã tồn tại trong hệ thống!');
+          showSuccess('Lỗi', 'Email này đã tồn tại trong hệ thống!');
           return;
         }
         users.unshift({
@@ -267,6 +267,25 @@ document.addEventListener('DOMContentLoaded', () => {
     studentToResetId = null;
   }
 
+  // Success Modal Elements
+  const successModal = document.getElementById('successModal');
+  const successModalOverlay = document.getElementById('successModalOverlay');
+  const successModalContent = document.getElementById('successModalContent');
+
+  function showSuccess(title, message) {
+    if (title) document.getElementById('successModalTitle').textContent = title;
+    if (message) document.getElementById('successModalMessage').textContent = message;
+    openModal(successModal, successModalOverlay, successModalContent);
+  }
+
+  function closeSuccessModal() {
+    closeModal(successModal, successModalOverlay, successModalContent);
+  }
+
+  document.querySelectorAll('.success-modal-close').forEach(btn => {
+    btn.addEventListener('click', closeSuccessModal);
+  });
+
   if (confirmResetPasswordBtn) {
     confirmResetPasswordBtn.addEventListener('click', () => {
       if (!studentToResetId) return;
@@ -276,9 +295,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (index !== -1) {
         users[index].password = '123456';
         localStorage.setItem('quiz_users', JSON.stringify(users));
-        alert('Khôi phục mật khẩu thành công! Mật khẩu mới là: 123456');
+        closeResetPasswordModal();
+
+        // Show success modal instead of alert
+        setTimeout(() => {
+          showSuccess('Đặt lại thành công', 'Mật khẩu đã được đưa về mặc định là 123456. Hãy ghi nhớ và thông báo cho học viên!');
+        }, 200);
+      } else {
+        closeResetPasswordModal();
       }
-      closeResetPasswordModal();
     });
   }
 
