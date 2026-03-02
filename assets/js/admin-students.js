@@ -443,9 +443,9 @@ function renderStudents() {
                 <span class="material-symbols-outlined text-[20px]">delete_forever</span>
             </button>
         ` : `
-            <button class="p-1.5 text-slate-400 hover:text-primary rounded transition-colors" title="Xem chi tiết điểm (Chưa có)">
+            <a href="admin-student-results.html?email=${encodeURIComponent(student.email)}" class="p-1.5 text-slate-400 hover:text-primary rounded transition-colors inline-block" title="Xem chi tiết điểm">
                 <span class="material-symbols-outlined text-[20px]">analytics</span>
-            </button>
+            </a>
             <button onclick="openEditStudentModal('${student.id}')" class="p-1.5 text-slate-400 hover:text-blue-500 rounded transition-colors" title="Chỉnh sửa">
                 <span class="material-symbols-outlined text-[20px]">edit</span>
             </button>
