@@ -9,6 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
   let allUsers = JSON.parse(localStorage.getItem('quiz_users')) || [];
   let students = allUsers.filter(u => u.role === 'student');
   let submissions = JSON.parse(localStorage.getItem('quiz_submissions')) || [];
+
+  // Auto-repair NaN timeSpent labels
+  let hasNaN = false;
+  submissions = submissions.map(sub => {
+    if (typeof sub.timeSpent === 'string' && sub.timeSpent.includes('NaN')) {
+      hasNaN = true;
+      return { ...sub, timeSpent: sub.timeSpent.replace('NaN phút ', '') };
+    }
+    return sub;
+  });
+  if (hasNaN) localStorage.setItem('quiz_submissions', JSON.stringify(submissions));
+
   let exams = JSON.parse(localStorage.getItem('quiz_exams')) || [];
 
   // Check if we came from admin-students page with a specific email

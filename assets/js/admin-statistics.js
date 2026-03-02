@@ -35,6 +35,23 @@ document.addEventListener('DOMContentLoaded', () => {
           { id: 4, text: 'Câu 4', options: ['A', 'B', 'C', 'D'], correctOption: 3 },
           { id: 5, text: 'Câu 5', options: ['A', 'B', 'C', 'D'], correctOption: 0 }
         ]
+      },
+      {
+        id: 'mock_exam_3',
+        title: 'Kiểm tra Sắp diễn ra (Demo)',
+        type: 'luyen-tap',
+        duration: 20,
+        isPermanent: false,
+        status: 'upcoming',
+        questionsCount: 10,
+        startTime: new Date(Date.now() + 10 * 60000).toISOString(), // Starts in 10 mins
+        endTime: new Date(Date.now() + 60 * 60000).toISOString(),
+        questions: Array.from({ length: 10 }).map((_, i) => ({
+          id: i + 1,
+          text: `Câu hỏi ôn tập ${i + 1}`,
+          options: ['A', 'B', 'C', 'D'],
+          correctOption: 0
+        }))
       }
     ];
     exams = mockExams;
@@ -106,7 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const finalScore = +(correctCount * scorePerQ).toFixed(1);
 
           // Random duration
-          const min = Math.floor(Math.random() * exam.duration);
+          const examDuration = Number(exam.duration || 60);
+          const min = Math.floor(Math.random() * examDuration);
 
           mockSubmissions.push({
             id: subId++,
@@ -131,7 +149,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function renderStatistics() {
-  const submissions = JSON.parse(localStorage.getItem('quiz_submissions')) || [];
+  let submissions = JSON.parse(localStorage.getItem('quiz_submissions')) || [];
+
+  // Auto-repair NaN timeSpent labels
+  let hasNaN = false;
+  submissions = submissions.map(sub => {
+    if (typeof sub.timeSpent === 'string' && sub.timeSpent.includes('NaN')) {
+      hasNaN = true;
+      return { ...sub, timeSpent: sub.timeSpent.replace('NaN phút ', '') };
+    }
+    return sub;
+  });
+  if (hasNaN) localStorage.setItem('quiz_submissions', JSON.stringify(submissions));
+
   const users = JSON.parse(localStorage.getItem('quiz_users')) || [];
   const students = users.filter(u => u.role !== 'admin' && u.username !== 'admin');
   const exams = JSON.parse(localStorage.getItem('quiz_exams')) || [];

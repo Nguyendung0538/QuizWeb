@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('correctCountDisplay').textContent = `${submission.correctAnswers} / ${submission.totalQuestions}`;
   const incorrectCount = submission.totalQuestions - submission.correctAnswers;
   document.getElementById('incorrectCountDisplay').textContent = `${incorrectCount} / ${submission.totalQuestions}`;
-  document.getElementById('timeSpentDisplay').textContent = submission.timeSpent || '--';
+  document.getElementById('timeSpentDisplay').textContent = (submission.timeSpent || '--').replace('NaN phút ', '');
 
   // 6. Render Detailed Review
   const reviewContainer = document.getElementById('reviewContainer');

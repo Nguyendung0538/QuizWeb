@@ -261,10 +261,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const score = questions.length > 0 ? (correctCount / questions.length) * 10 : 0;
 
     // Time spent
-    const totalDurationSeconds = (exam.duration || 60) * 60;
-    const timeSpentSeconds = totalDurationSeconds - timeRemaining;
-    const tsMin = Math.floor(timeSpentSeconds / 60);
-    const tsSec = timeSpentSeconds % 60;
+    const totalDurationSeconds = Number(exam.duration || 60) * 60;
+    const timeSpentSeconds = totalDurationSeconds - Number(timeRemaining || 0);
+    const tsMin = Math.floor(timeSpentSeconds / 60) || 0;
+    const tsSec = timeSpentSeconds % 60 || 0;
     const formattedTimeSpent = `${tsMin > 0 ? tsMin + ' phút ' : ''}${tsSec}s`;
 
     // Format Date
