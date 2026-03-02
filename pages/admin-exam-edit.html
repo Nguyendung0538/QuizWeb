@@ -34,12 +34,12 @@
             </div>
             <nav class="flex-1 px-4 space-y-2 mt-4">
                 <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary font-semibold transition-colors"
-                    href="#">
+                    href="admin-dashboard.html">
                     <span class="material-symbols-outlined">description</span>
                     <span class="text-sm">Quản lý Kỳ thi</span>
                 </a>
                 <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                    href="#">
+                    href="admin-students.html">
                     <span class="material-symbols-outlined">group</span>
                     <span class="text-sm">Quản lý Sinh viên</span>
                 </a>
@@ -79,7 +79,7 @@
                     <h2 class="text-2xl font-bold tracking-tight">Tạo kỳ thi mới</h2>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button
+                    <button onclick="window.location.href='admin-dashboard.html'"
                         class="px-6 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
                         Hủy
                     </button>
@@ -194,7 +194,7 @@
                 <div class="flex items-center justify-between pb-12">
                     <p class="text-sm text-slate-500 italic flex items-center gap-1"> </p>
                     <div class="flex gap-4">
-                        <button
+                        <button onclick="window.location.href='admin-dashboard.html'"
                             class="px-8 py-3 rounded-xl border border-slate-300 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
                             Hủy
                         </button>
@@ -207,6 +207,31 @@
             </div>
         </main>
     </div>
+
+    <!-- Custom Alert Modal -->
+    <div id="customAlertModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm custom-alert-close transition-opacity opacity-0"
+            id="customAlertModalOverlay"></div>
+
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-white dark:bg-slate-900 rounded-xl shadow-2xl p-6 text-center scale-95 opacity-0 transition-all duration-300"
+            id="customAlertModalContent">
+            <div
+                class="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-500 mx-auto flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-3xl">info</span>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Thông báo</h3>
+            <p id="customAlertMessage"
+                class="text-sm text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-6 mb-6">
+                <!-- Nội dung thông báo -->
+            </p>
+
+            <button type="button"
+                class="custom-alert-close w-full py-2.5 bg-primary text-white font-semibold text-sm rounded-lg hover:bg-primary/90 shadow-md shadow-primary/20 transition-all">
+                Đã hiểu
+            </button>
+        </div>
+    </div>
+
     <script src="../assets/js/admin-exam-builder.js"></script>
 </body>
 

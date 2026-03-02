@@ -22,8 +22,58 @@ document.addEventListener('DOMContentLoaded', () => {
     addQuestionBlock();
   });
 
-  saveBtnTop.addEventListener('click', saveExam);
-  saveBtnBottom.addEventListener('click', saveExam);
+  if (saveBtnTop) saveBtnTop.addEventListener('click', saveExam);
+  if (saveBtnBottom) saveBtnBottom.addEventListener('click', saveExam);
+
+  const examStartTime = document.getElementById('examStartTime');
+  const examEndTime = document.getElementById('examEndTime');
+
+  if (examStartTime && examEndTime) {
+    examStartTime.addEventListener('change', () => {
+      examEndTime.min = examStartTime.value;
+      if (examEndTime.value && new Date(examEndTime.value) <= new Date(examStartTime.value)) {
+        examEndTime.value = '';
+      }
+    });
+
+    examEndTime.addEventListener('change', () => {
+      if (examStartTime.value && new Date(examEndTime.value) <= new Date(examStartTime.value)) {
+        showCustomAlert('Thời gian kết thúc phải sau thời gian bắt đầu!');
+        examEndTime.value = '';
+      }
+    });
+  }
+
+  // Custom Alert Modal logic
+  const customAlertModal = document.getElementById('customAlertModal');
+  const customAlertModalOverlay = document.getElementById('customAlertModalOverlay');
+  const customAlertModalContent = document.getElementById('customAlertModalContent');
+  const customAlertMessage = document.getElementById('customAlertMessage');
+
+  document.querySelectorAll('.custom-alert-close').forEach(btn => {
+    btn.addEventListener('click', closeCustomAlert);
+  });
+
+  window.showCustomAlert = function (msg) {
+    if (!customAlertModal) {
+      alert(msg); // fallback
+      return;
+    }
+    customAlertMessage.textContent = msg;
+    customAlertModal.classList.remove('hidden');
+    void customAlertModal.offsetWidth;
+    customAlertModalOverlay.classList.remove('opacity-0');
+    customAlertModalContent.classList.remove('opacity-0', 'scale-95');
+    customAlertModalContent.classList.add('scale-100');
+  };
+
+  function closeCustomAlert() {
+    if (!customAlertModal) return;
+    customAlertModalOverlay.classList.add('opacity-0');
+    customAlertModalContent.classList.remove('scale-100');
+    customAlertModalContent.classList.add('opacity-0', 'scale-95');
+    setTimeout(() => customAlertModal.classList.add('hidden'), 300);
+  }
 
   function addQuestionBlock(data = null) {
     questionCount++;
@@ -127,13 +177,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const endTime = document.getElementById('examEndTime') ? document.getElementById('examEndTime').value : '';
 
     if (!title || !type || !duration) {
-      alert('Vui lòng điền đầy đủ Thông tin chung của kỳ thi!');
+      showCustomAlert('Vui lòng điền đầy đủ Thông tin chung của kỳ thi!');
       return;
+    }
+
+    if (!isPermanent) {
+      if (!startTime || !endTime) {
+        showCustomAlert('Vui lòng chọn đầy đủ thời gian bắt đầu và kết thúc!');
+        return;
+      }
+      if (new Date(endTime) <= new Date(startTime)) {
+        showCustomAlert('Thời gian kết thúc phải sau thời gian bắt đầu!');
+        return;
+      }
     }
 
     const questionBlocks = document.querySelectorAll('.question-block');
     if (questionBlocks.length === 0) {
-      alert('Cần có ít nhất 1 câu hỏi trong kỳ thi!');
+      showCustomAlert('Cần có ít nhất 1 câu hỏi trong kỳ thi!');
       return;
     }
 
@@ -159,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (!isValid) {
-      alert('Vui lòng điền đầy đủ đáp án và chọn câu đúng cho tất cả câu hỏi!');
+      showCustomAlert('Vui lòng điền đầy đủ đáp án và chọn câu đúng cho tất cả câu hỏi!');
       return;
     }
 

@@ -28,11 +28,117 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const searchInput = document.getElementById('searchExamInput');
+  const statusFilter = document.getElementById('statusExamFilter');
+
   if (searchInput) {
     searchInput.addEventListener('input', () => {
-      currentPage = 1; // Reset to page 1 on search
+      currentPage = 1;
       renderExams();
     });
+  }
+
+  if (statusFilter) {
+    statusFilter.addEventListener('change', () => {
+      currentPage = 1;
+      renderExams();
+    });
+  }
+
+  // Multi-delete setup
+  const selectAllCheckbox = document.getElementById('selectAllExams');
+  if (selectAllCheckbox) {
+    selectAllCheckbox.addEventListener('change', (e) => {
+      const isChecked = e.target.checked;
+      const examCheckboxes = document.querySelectorAll('.exam-checkbox');
+      examCheckboxes.forEach(cb => {
+        cb.checked = isChecked;
+      });
+      updateSelectedCount();
+    });
+  }
+
+  const multiDeleteBtn = document.getElementById('multiDeleteBtn');
+  if (multiDeleteBtn) {
+    multiDeleteBtn.addEventListener('click', () => {
+      const selectedBoxes = document.querySelectorAll('.exam-checkbox:checked');
+      if (selectedBoxes.length === 0) return;
+
+      document.getElementById('deleteMultipleCount').textContent = selectedBoxes.length;
+      openMultiDeleteModal();
+    });
+  }
+
+  const deleteMultipleModal = document.getElementById('deleteMultipleModal');
+  const deleteMultipleModalOverlay = document.getElementById('deleteMultipleModalOverlay');
+  const deleteMultipleModalContent = document.getElementById('deleteMultipleModalContent');
+
+  document.querySelectorAll('.delete-multiple-close').forEach(btn => {
+    btn.addEventListener('click', closeMultiDeleteModal);
+  });
+
+  const confirmDeleteMultipleBtn = document.getElementById('confirmDeleteMultipleBtn');
+  if (confirmDeleteMultipleBtn) {
+    confirmDeleteMultipleBtn.addEventListener('click', () => {
+      const selectedBoxes = document.querySelectorAll('.exam-checkbox:checked');
+      const idsToDelete = Array.from(selectedBoxes).map(cb => cb.dataset.id);
+
+      let exams = JSON.parse(localStorage.getItem('quiz_exams')) || [];
+      exams = exams.filter(exam => !idsToDelete.includes(exam.id));
+      localStorage.setItem('quiz_exams', JSON.stringify(exams));
+
+      closeMultiDeleteModal();
+
+      const selectAllCheckbox = document.getElementById('selectAllExams');
+      if (selectAllCheckbox) selectAllCheckbox.checked = false;
+
+      renderExams();
+    });
+  }
+
+  window.handleExamSelection = function () {
+    const examCheckboxes = document.querySelectorAll('.exam-checkbox');
+    const allChecked = Array.from(examCheckboxes).every(cb => cb.checked);
+    const selectAllCheckbox = document.getElementById('selectAllExams');
+    if (selectAllCheckbox) {
+      selectAllCheckbox.checked = allChecked && examCheckboxes.length > 0;
+    }
+    updateSelectedCount();
+  };
+
+  function updateSelectedCount() {
+    const selectedCount = document.querySelectorAll('.exam-checkbox:checked').length;
+    const countEl = document.getElementById('selectedCount');
+    const multiDeleteBtn = document.getElementById('multiDeleteBtn');
+
+    if (countEl) countEl.textContent = selectedCount;
+    if (multiDeleteBtn) {
+      if (selectedCount > 0) {
+        multiDeleteBtn.classList.remove('hidden');
+        multiDeleteBtn.classList.add('flex');
+      } else {
+        multiDeleteBtn.classList.add('hidden');
+        multiDeleteBtn.classList.remove('flex');
+      }
+    }
+  }
+
+  function openMultiDeleteModal() {
+    if (!deleteMultipleModal) return;
+    deleteMultipleModal.classList.remove('hidden');
+    void deleteMultipleModal.offsetWidth; // trigger reflow
+    deleteMultipleModalOverlay.classList.remove('opacity-0');
+    deleteMultipleModalContent.classList.remove('opacity-0', 'scale-95');
+    deleteMultipleModalContent.classList.add('scale-100');
+  }
+
+  function closeMultiDeleteModal() {
+    if (!deleteMultipleModal) return;
+    deleteMultipleModalOverlay.classList.add('opacity-0');
+    deleteMultipleModalContent.classList.remove('scale-100');
+    deleteMultipleModalContent.classList.add('opacity-0', 'scale-95');
+    setTimeout(() => {
+      deleteMultipleModal.classList.add('hidden');
+    }, 300);
   }
 
   renderExams();
@@ -82,7 +188,9 @@ function renderExams() {
   let exams = JSON.parse(localStorage.getItem('quiz_exams')) || [];
 
   const searchInput = document.getElementById('searchExamInput');
+  const statusFilter = document.getElementById('statusExamFilter');
   const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const statusQuery = statusFilter ? statusFilter.value : 'all';
 
   const now = new Date();
   let needsSync = false;
@@ -136,13 +244,15 @@ function renderExams() {
     upcomingExamsElement.textContent = upcomingExamsCount;
   }
 
-  // Filter Logic
-  let filteredExams = exams;
-  if (searchQuery) {
-    filteredExams = exams.filter(exam =>
-      exam.title.toLowerCase().includes(searchQuery)
-    );
-  }
+  let filteredExams = exams.filter(exam => {
+    const matchesSearch = exam.title.toLowerCase().includes(searchQuery);
+    let matchesStatus = true;
+    if (statusQuery === 'active') matchesStatus = exam.status === 'active';
+    if (statusQuery === 'closed') matchesStatus = exam.status === 'closed';
+    if (statusQuery === 'upcoming') matchesStatus = exam.status === 'upcoming';
+
+    return matchesSearch && matchesStatus;
+  });
 
   // Pagination Logic
   const totalItems = filteredExams.length;
@@ -165,7 +275,7 @@ function renderExams() {
   if (totalItems === 0) {
     examsTableBody.innerHTML = `
             <tr>
-                <td colspan="5" class="px-6 py-8 text-center text-slate-500">
+                <td colspan="6" class="px-6 py-8 text-center text-slate-500">
                     Chưa có kỳ thi nào. Hãy tạo kỳ thi mới!
                 </td>
             </tr>
@@ -178,6 +288,9 @@ function renderExams() {
   paginatedExams.forEach(exam => {
     html += `
             <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                <td class="px-6 py-4">
+                    <input type="checkbox" onclick="handleExamSelection()" data-id="${exam.id}" class="exam-checkbox rounded border-slate-300 text-primary focus:ring-primary">
+                </td>
                 <td class="px-6 py-4">
                     <div class="font-semibold">${exam.title}</div>
                 </td>
@@ -210,54 +323,57 @@ function renderPagination(totalPages) {
   const paginationContainer = document.getElementById('examTablePagination');
   if (!paginationContainer) return;
 
-  if (totalPages <= 1) {
-    paginationContainer.innerHTML = '';
-    return;
-  }
+  if (totalPages === 0) totalPages = 1;
 
   let html = '';
 
   // Prev Button
-  html += `
-        <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}
-            class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed">
-            Trước
-        </button>
-    `;
+  html += `<button onclick="changePage(${currentPage - 1})" class="px-3 py-1.5 text-sm font-medium border border-slate-200 rounded-lg ${currentPage === 1 ? 'text-slate-400 cursor-not-allowed' : 'text-slate-600 hover:border-primary hover:text-primary transition-colors'}">Trước</button>`;
 
-  // Page Numbers
+  // Page numbers
   for (let i = 1; i <= totalPages; i++) {
-    if (i === currentPage) {
-      html += `
-                <button
-                    class="px-3 py-1.5 rounded-lg border border-primary bg-primary text-white text-sm font-medium">
-                    ${i}
-                </button>
-            `;
-    } else {
-      html += `
-                <button onclick="changePage(${i})"
-                    class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-sm font-medium">
-                    ${i}
-                </button>
-            `;
+    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+      if (i === currentPage) {
+        html += `<button class="w-8 h-8 flex items-center justify-center text-sm font-medium border border-primary bg-primary/10 text-primary rounded-lg">${i}</button>`;
+      } else {
+        html += `<button onclick="changePage(${i})" class="w-8 h-8 flex items-center justify-center text-sm font-medium border border-slate-200 text-slate-600 hover:border-primary hover:text-primary transition-colors rounded-lg">${i}</button>`;
+      }
+    } else if (i === currentPage - 2 || i === currentPage + 2) {
+      if (html.includes('<!-- last ... break -->')) continue;
+      html += `<span class="px-2 text-slate-400">...</span>`;
     }
   }
 
   // Next Button
-  html += `
-        <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}
-            class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed">
-            Tiếp
-        </button>
-    `;
+  html += `<button onclick="changePage(${currentPage + 1})" class="px-3 py-1.5 text-sm font-medium border border-slate-200 rounded-lg ${currentPage === totalPages || totalPages === 0 ? 'text-slate-400 cursor-not-allowed' : 'text-slate-600 hover:border-primary hover:text-primary transition-colors'}">Tiếp</button>`;
 
   paginationContainer.innerHTML = html;
 }
 
 function changePage(page) {
-  currentPage = page;
-  renderExams();
+  const exams = JSON.parse(localStorage.getItem('quiz_exams')) || [];
+  const statusFilter = document.getElementById('statusExamFilter');
+  const searchInput = document.getElementById('searchExamInput');
+  const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const statusQuery = statusFilter ? statusFilter.value : 'all';
+
+  let filteredExams = exams.filter(exam => {
+    const matchesSearch = exam.title.toLowerCase().includes(searchQuery);
+    let matchesStatus = true;
+    if (statusQuery === 'active') matchesStatus = exam.status === 'active';
+    if (statusQuery === 'closed') matchesStatus = exam.status === 'closed';
+    if (statusQuery === 'upcoming') matchesStatus = exam.status === 'upcoming';
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const totalItems = filteredExams.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+  if (page >= 1 && page <= totalPages) {
+    currentPage = page;
+    renderExams();
+  }
 }
 
 function deleteExam(id) {
