@@ -16,6 +16,7 @@
         rel="stylesheet" />
     
     <link href="../assets/css/style.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 
 <body class="bg-slate-50 font-display text-slate-900">
@@ -174,7 +175,13 @@
                             <h3 class="font-bold text-lg">Danh sách câu hỏi</h3>
                         </div>
                         <div class="flex gap-3">
-                            <button
+                            <input type="file" id="excelFileInput" accept=".xlsx, .xls" class="hidden" />
+                            <button id="downloadTemplateBtn"
+                                class="flex items-center gap-2 px-4 py-2 border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-bold text-sm rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                <span class="material-symbols-outlined text-[18px]">download</span>
+                                Tải file mẫu
+                            </button>
+                            <button id="importExcelBtn"
                                 class="flex items-center gap-2 px-4 py-2 border border-primary text-primary font-bold text-sm rounded-lg hover:bg-primary/5 transition-colors">
                                 <span class="material-symbols-outlined text-[18px]">upload_file</span>
                                 Import Excel
