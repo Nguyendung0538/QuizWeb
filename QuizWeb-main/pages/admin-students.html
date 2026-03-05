@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+
+  <link href="../assets/css/style.css" rel="stylesheet" />
+  <title>Admin - Quản lý Sinh viên | Quiz Web PTIT</title>
+</head>
+
+<body class="font-display bg-slate-50 text-slate-900 antialiased">
+  <script>
+    // Immediate Admin Auth Check
+    const currentUser = JSON.parse(localStorage.getItem('quiz_current_user'));
+    if (!currentUser || currentUser.role !== 'admin') {
+      window.location.href = 'login.html';
+    }
+  </script>
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col z-20">
+      <div class="p-6 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+          <span class="material-symbols-outlined">school</span>
+        </div>
+        <div>
+          <h1 class="text-sm font-bold uppercase tracking-wider text-primary">Quiz PTIT</h1>
+          <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Hệ thống quản lý thi</p>
+        </div>
+      </div>
+      <nav class="flex-1 px-4 space-y-2 mt-4">
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          href="admin-dashboard.html">
+          <span class="material-symbols-outlined">description</span>
+          <span class="text-sm">Quản lý Kỳ thi</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary font-semibold transition-colors"
+          href="#">
+          <span class="material-symbols-outlined">group</span>
+          <span class="text-sm">Quản lý Sinh viên</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          href="admin-statistics.html">
+          <span class="material-symbols-outlined">bar_chart</span>
+          <span class="text-sm">Thống kê &amp; Báo cáo</span>
+        </a>
+      </nav>
+      <div class="px-6 pb-6">
+        <button id="adminLogoutBtn"
+          class="flex w-full items-center justify-center gap-3 px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500 font-semibold transition-colors">
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          <span>Đăng xuất</span>
+        </button>
+      </div>
+    </aside>
+    <script>
+      document.getElementById('adminLogoutBtn')?.addEventListener('click', () => {
+        localStorage.removeItem('quiz_current_user');
+        window.location.href = 'login.html';
+      });
+    </script>
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-auto">
+      <!-- Dashboard Content -->
+      <div class="p-8 max-w-7xl mx-auto w-full">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Quản lý Học viên</h2>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Danh sách, thông tin và hoạt động của tất cả
+              người dùng.</p>
+          </div>
+          <button id="openAddModalBtn"
+            class="px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary/90 flex items-center gap-2 shadow-md shadow-primary/20 transition-all">
+            <span class="material-symbols-outlined text-[20px]">person_add</span>
+            Thêm học viên
+          </button>
+        </div>
+
+        <!-- Metrics Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div
+            class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <span class="material-symbols-outlined">group</span>
+            </div>
+            <div>
+              <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Tổng số học viên</p>
+              <p id="totalStudentsCount" class="text-2xl font-bold">0</p>
+            </div>
+          </div>
+          <div
+            class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div class="size-12 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+              <span class="material-symbols-outlined">verified_user</span>
+            </div>
+            <div>
+              <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Đang hoạt động</p>
+              <p id="activeStudentsCount" class="text-2xl font-bold">0</p>
+            </div>
+          </div>
+          <div
+            class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div class="size-12 rounded-lg bg-red-100 text-red-600 flex items-center justify-center">
+              <span class="material-symbols-outlined">block</span>
+            </div>
+            <div>
+              <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Bị khóa</p>
+              <p id="lockedStudentsCount" class="text-2xl font-bold">0</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Students Table List -->
+        <div
+          class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <!-- Filters & Search -->
+          <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="relative w-64">
+                <span
+                  class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+                <input id="searchInput"
+                  class="w-full pl-10 pr-4 py-2 rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-primary focus:border-primary text-sm transition-all"
+                  placeholder="Tìm kiếm tên, email..." type="text" />
+              </div>
+              <select id="statusFilter"
+                class="rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-primary focus:border-primary">
+                <option value="all">Tất cả trạng thái</option>
+                <option value="active">Đang hoạt động</option>
+                <option value="locked">Bị khóa</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-2">
+              <div id="bulkStatusActions"
+                class="hidden items-center gap-2 bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 rounded-lg p-1 mr-2">
+                <button id="multiLockStudentBtn"
+                  class="px-3 py-1.5 text-slate-600 hover:text-amber-600 dark:text-slate-400 dark:hover:text-amber-500 hover:bg-white dark:hover:bg-slate-700 rounded text-sm font-semibold transition-colors flex items-center gap-1.5 shadow-sm">
+                  <span class="material-symbols-outlined text-[16px]">lock</span>
+                  Khóa
+                </button>
+                <div class="w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
+                <button id="multiUnlockStudentBtn"
+                  class="px-3 py-1.5 text-slate-600 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-500 hover:bg-white dark:hover:bg-slate-700 rounded text-sm font-semibold transition-colors flex items-center gap-1.5 shadow-sm">
+                  <span class="material-symbols-outlined text-[16px]">lock_open</span>
+                  Mở khóa
+                </button>
+              </div>
+              <button id="multiDeleteStudentBtn"
+                class="hidden px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20 text-sm font-semibold rounded-lg transition-colors items-center gap-2 border border-red-200 dark:border-red-900/50">
+                <span class="material-symbols-outlined text-[18px]">delete</span>
+                Xóa (<span id="selectedStudentCount">0</span>)
+              </button>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                  <th class="px-6 py-4 w-12">
+                    <input type="checkbox" id="selectAllStudents"
+                      class="rounded border-slate-300 text-primary focus:ring-primary">
+                  </th>
+                  <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    Người dùng</th>
+                  <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    Email</th>
+                  <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    Trạng thái</th>
+                  <th
+                    class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTableBody" class="divide-y divide-slate-200 dark:divide-slate-800">
+                <!-- Rendered dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <p id="paginationInfo" class="text-sm text-slate-500">Đang hiển thị <span
+                class="font-medium text-slate-900">0</span> trong
+              số <span class="font-medium text-slate-900">0</span> sinh viên</p>
+            <div class="flex items-center gap-1">
+              <button
+                class="px-3 py-1.5 text-sm font-medium border border-slate-200 rounded-lg text-slate-400 cursor-not-allowed">Trước</button>
+              <button
+                class="w-8 h-8 flex items-center justify-center text-sm font-medium border border-primary bg-primary/10 text-primary rounded-lg">1</button>
+              <button
+                class="w-8 h-8 flex items-center justify-center text-sm font-medium border border-slate-200 text-slate-600 hover:border-primary hover:text-primary transition-colors rounded-lg">2</button>
+              <button
+                class="w-8 h-8 flex items-center justify-center text-sm font-medium border border-slate-200 text-slate-600 hover:border-primary hover:text-primary transition-colors rounded-lg">3</button>
+              <span class="px-2 text-slate-400">...</span>
+              <button
+                class="px-3 py-1.5 text-sm font-medium border border-slate-200 rounded-lg text-slate-600 hover:border-primary hover:text-primary transition-colors">Tiếp</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add/Edit Student Modal -->
+  <div id="studentModal" class="fixed inset-0 z-[100] hidden">
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm modal-close transition-opacity opacity-0"
+      id="studentModalOverlay"></div>
+
+    <!-- Modal Content -->
+    <div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white dark:bg-slate-900 rounded-xl shadow-2xl scale-95 opacity-0 transition-all duration-300"
+      id="studentModalContent">
+      <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <h3 id="modalTitle" class="text-xl font-bold text-slate-900 dark:text-white">Thêm học viên mới</h3>
+        <button class="modal-close text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="p-6">
+        <form id="studentForm" class="space-y-4">
+          <input type="hidden" id="studentId" />
+
+          <div class="space-y-1.5">
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Họ và Tên <span
+                class="text-error">*</span></label>
+            <input type="text" id="studentName" required
+              class="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+              placeholder="Nhập họ và tên..." />
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Email <span
+                class="text-error">*</span></label>
+            <input type="email" id="studentEmail" required
+              class="w-full px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+              placeholder="example@student.ptit.edu.vn" />
+          </div>
+
+          <div class="space-y-1.5 pt-2">
+            <p class="text-xs text-slate-500 italic">Lưu ý: Mật khẩu mặc định cho tài khoản mới là <strong
+                class="text-slate-700 dark:text-slate-300">123456</strong>.</p>
+          </div>
+
+          <div class="pt-6 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 mt-6">
+            <div>
+              <button type="button" id="resetPasswordBtnInModal"
+                class="hidden px-4 py-2.5 bg-primary/10 text-primary hover:bg-primary/20 font-semibold text-sm rounded-lg transition-all flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">key</span>
+                Đặt lại mật khẩu
+              </button>
+            </div>
+            <div class="flex items-center gap-3">
+              <button type="button"
+                class="modal-close px-5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 font-semibold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+                Hủy
+              </button>
+              <button type="submit"
+                class="px-5 py-2.5 bg-primary text-white font-semibold text-sm rounded-lg hover:bg-primary/90 shadow-md shadow-primary/20 transition-all">
+                Lưu thông tin
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm delete-close transition-opacity opacity-0"
+      id="deleteModalOverlay"></div>
+
+    <div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-white dark:bg-slate-900 rounded-xl shadow-2xl p-6 text-center scale-95 opacity-0 transition-all duration-300"
+      id="deleteModalContent">
+      <div
+        class="w-16 h-16 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 mx-auto flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-3xl">warning</span>
+      </div>
+      <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Xác nhận xóa tài khoản</h3>
+      <p class="text-sm text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-6 mb-6">
+        Bạn có chắc chắn muốn xóa vĩnh viễn học viên <strong id="deleteTargetEmail"
+          class="text-slate-700 dark:text-slate-300">...</strong>?<br />
+        Hành động này không thể hoàn tác và sẽ xóa mọi dữ liệu thi của người này.
+      </p>
+
+      <div class="flex items-center gap-3">
+        <button type="button"
+          class="delete-close flex-1 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 font-semibold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+          Hủy
+        </button>
+        <button type="button" id="confirmDeleteBtn"
+          class="flex-1 py-2.5 bg-red-600 text-white font-semibold text-sm rounded-lg hover:bg-red-700 shadow-md shadow-red-600/20 transition-all">
+          Xóa vĩnh viễn
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Multiple Students Confirmation Modal -->
+  <div id="deleteMultipleStudentModal" class="fixed inset-0 z-[100] hidden">
+    <div
+      class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm delete-multiple-student-close transition-opacity opacity-0"
+      id="deleteMultipleStudentModalOverlay"></div>
+    <div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-white dark:bg-slate-900 rounded-xl shadow-2xl p-6 text-center scale-95 opacity-0 transition-all duration-300"
+      id="deleteMultipleStudentModalContent">
+      <div
+        class="w-16 h-16 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 mx-auto flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-3xl">warning</span>
+      </div>
+      <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Xác nhận xóa hàng loạt</h3>
+      <p class="text-sm text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-6 mb-6">
+        Bạn có chắc chắn muốn xóa vĩnh viễn <strong id="deleteMultipleStudentCount"
+          class="text-red-500 font-bold text-lg">0</strong> học viên đã chọn?<br />
+        Hành động này không thể hoàn tác và sẽ xóa mọi dữ liệu thi của những người này.
+      </p>
+      <div class="flex items-center gap-3">
+        <button type="button"
+          class="delete-multiple-student-close flex-1 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 font-semibold text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+          Hủy
+        </button>
+        <button type="button" id="confirmDeleteMultipleStudentBtn"
+          class="flex-1 py-2.5 bg-red-600 text-white font-semibold text-sm rounded-lg hover:bg-red-700 shadow-md shadow-red-600/20 transition-all">
+          Xóa tất cả
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset Password Confirm Modal -->
+  <div id="resetPasswordModal" class="fixed inset-0 z-[110] hidden">
+    <div
+      class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm reset-modal-close pointer-events-none transition-opacity opacity-0"
+      id="resetPasswordModalOverlay"></div>
+    <div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-xl transform scale-95 opacity-0 transition-all overflow-hidden border border-slate-200 dark:border-slate-800"
+      id="resetPasswordModalContent">
+      <div class="p-6">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="size-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-2xl">key</span>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Đặt lại mật khẩu</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Hành động này sẽ thiết lập lại mật khẩu của học
+              viên.</p>
+          </div>
+        </div>
+        <p class="text-slate-600 dark:text-slate-300 text-sm mb-6">Bạn có chắc chắn muốn đặt lại mật khẩu cho <span
+            id="resetStudentName" class="font-bold text-slate-900 dark:text-white"></span> về mật khẩu mặc định (<span
+            class="font-bold text-amber-600">123456</span>)?</p>
+        <div class="flex items-center justify-end gap-3">
+          <button
+            class="reset-modal-close px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            type="button">Hủy</button>
+          <button id="confirmResetPasswordBtn"
+            class="px-5 py-2.5 text-sm font-semibold rounded-lg transition-colors shadow-sm"
+            style="background-color: #d41c34; color: white;" type="button">Xác nhận Đặt lại</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Notification Modal -->
+  <div id="successModal" class="fixed inset-0 hidden" style="z-index: 9999;">
+    <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm success-modal-close transition-opacity opacity-0"
+      id="successModalOverlay"></div>
+    <div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-6 text-center scale-95 opacity-0 transition-all duration-300 border border-slate-100 dark:border-slate-800"
+      id="successModalContent">
+      <div
+        class="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 mx-auto flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-3xl">check_circle</span>
+      </div>
+      <h3 id="successModalTitle" class="text-xl font-bold text-slate-900 dark:text-white mb-2">Thành công!</h3>
+      <p id="successModalMessage" class="text-sm text-slate-500 dark:text-slate-400 mb-6">
+        Mật khẩu đã được đặt lại thành công.
+      </p>
+      <button type="button"
+        class="success-modal-close w-full py-3 font-bold rounded-xl shadow-lg transition-all active:scale-[0.98]"
+        style="background-color: #d41c34; color: white;">
+        Đóng
+      </button>
+    </div>
+  </div>
+
+  <script src="../assets/js/admin-students.js"></script>
+</body>
+
+</html>
