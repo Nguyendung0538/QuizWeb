@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Đăng ký - Quiz Web PTIT</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    
+    <link href="../assets/css/style.css" rel="stylesheet" />
+</head>
+
+<body class="font-display bg-white min-h-screen flex flex-col">
+    <div class="relative flex h-auto min-h-screen w-full flex-col bg-white group/design-root overflow-x-hidden">
+        <div class="layout-container flex h-full grow flex-col">
+            <header
+                class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-100 px-10 py-4">
+                <div class="flex items-center gap-3 text-primary">
+                    <div class="text-primary">
+                        <span class="material-symbols-outlined text-3xl">school</span>
+                    </div>
+                    <h2 class="text-primary text-xl font-bold leading-tight tracking-tight">Quiz Web PTIT</h2>
+                </div>
+            </header>
+            <main class="flex flex-1 items-center justify-center p-6 bg-slate-50">
+                <div
+                    class="w-full max-w-[480px] bg-white rounded-xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                    <div class="flex border-b border-slate-100">
+                        <button onclick="window.location.href='login.html'"
+                            class="flex-1 py-4 text-center text-sm font-semibold text-slate-400 hover:text-slate-600 transition-colors">
+                            Đăng nhập
+                        </button>
+                        <button
+                            class="flex-1 py-4 text-center text-sm font-bold text-primary border-b-2 border-primary">
+                            Đăng ký
+                        </button>
+                    </div>
+                    <div class="p-8">
+                        <div class="mb-8">
+                            <h1 class="text-2xl font-bold text-slate-900">Tạo tài khoản mới</h1>
+                        </div>
+                        <form id="registerForm" class="space-y-5">
+                            <div class="space-y-2">
+                                <label class="text-slate-700 text-sm font-semibold flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">person</span>
+                                    Họ và tên
+                                </label>
+                                <input id="nameInput"
+                                    class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+                                    placeholder="Nguyễn Văn A" type="text" />
+                                <p id="nameError" class="text-red-500 text-xs mt-1 hidden">Vui lòng nhập họ và tên</p>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-slate-700 text-sm font-semibold flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">mail</span>
+                                    Email
+                                </label>
+                                <input id="emailInput"
+                                    class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+                                    placeholder="example@gmail.com" type="email" />
+                                <p id="emailError" class="text-red-500 text-xs mt-1 hidden">Vui lòng nhập email hợp lệ
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label class="text-slate-700 text-sm font-semibold flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm">lock</span>
+                                        Mật khẩu
+                                    </label>
+                                    <input id="passwordInput"
+                                        class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+                                        placeholder="••••••••" type="password" />
+                                    <p id="passwordError" class="text-red-500 text-xs mt-1 hidden">Vui lòng nhập mật
+                                        khẩu (ít nhất 6 ký tự)</p>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-slate-700 text-sm font-semibold flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm">verified_user</span>
+                                        Xác nhận
+                                    </label>
+                                    <input id="confirmPasswordInput"
+                                        class="w-full h-12 px-4 rounded-lg border border-[#CBD5E1] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400"
+                                        placeholder="••••••••" type="password" />
+                                    <p id="confirmError" class="text-red-500 text-xs mt-1 hidden">Mật khẩu xác nhận
+                                        không khớp</p>
+                                </div>
+                            </div>
+                            <div class="pt-2">
+                                <button
+                                    class="w-full h-12 bg-primary hover:bg-red-700 text-white font-bold rounded-lg transition-colors shadow-md shadow-primary/20 flex items-center justify-center gap-2"
+                                    type="submit">
+                                    Đăng ký
+                                    <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="px-8 pb-8 text-center">
+                        <p class="text-sm text-slate-500">
+                            Đã có tài khoản?
+                            <a class="text-primary font-bold hover:underline" href="login.html">Đăng nhập ngay</a>
+                        </p>
+                    </div>
+                </div>
+            </main>
+            <footer class="bg-white border-t border-slate-200 py-6 text-center mt-auto">
+                <p class="text-slate-500 text-sm font-medium">2026 Quiz Web PTIT</p>
+            </footer>
+        </div>
+
+        <script src="../assets/js/register.js"></script>
+
+        <!-- Custom Alert Modal -->
+        <div id="customAlertModal" class="fixed inset-0 z-[100] hidden">
+            <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm custom-alert-close transition-opacity opacity-0"
+                id="customAlertModalOverlay"></div>
+
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-white rounded-xl shadow-2xl p-6 text-center scale-95 opacity-0 transition-all duration-300"
+                id="customAlertModalContent">
+                <div
+                    class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-500 mx-auto flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-3xl">check_circle</span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Thành công!</h3>
+                <p id="customAlertMessage" class="text-sm text-slate-500 border-b border-slate-100 pb-6 mb-6">
+                    <!-- Nội dung thông báo -->
+                </p>
+
+                <button type="button"
+                    class="custom-alert-close w-full py-2.5 bg-primary text-white font-semibold text-sm rounded-lg hover:bg-primary/90 shadow-md shadow-primary/20 transition-all">
+                    Đã hiểu
+                </button>
+            </div>
+        </div>
+</body>
+
+</html>

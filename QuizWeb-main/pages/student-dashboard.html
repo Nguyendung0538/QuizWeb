@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+
+    <link href="../assets/css/style.css" rel="stylesheet" />
+    <title>Student Exam Dashboard | Quiz Web PTIT</title>
+</head>
+
+<body class="bg-slate-50 font-display text-text-primary min-h-screen flex flex-col">
+    <script>
+        // Immediate Auth Check
+        const currentUser = JSON.parse(localStorage.getItem('quiz_current_user'));
+        if (!currentUser || currentUser.role !== 'student') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <!-- Top App Bar -->
+    <header
+        class="sticky top-0 z-50 flex items-center justify-between bg-white border-b border-solid border-slate-100 px-10 py-4">
+        <div class="flex items-center gap-3 text-primary">
+            <div class="text-primary">
+                <span class="material-symbols-outlined text-3xl">school</span>
+            </div>
+            <h2 class="text-primary text-xl font-bold leading-tight tracking-tight">Quiz Web PTIT</h2>
+        </div>
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p id="headerUserName" class="text-sm font-bold text-slate-900">Sinh viên</p>
+                </div>
+                <div
+                    class="size-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden">
+                    <span class="material-symbols-outlined text-primary">person</span>
+                </div>
+            </div>
+            <button id="logoutBtn"
+                class="text-text-secondary text-sm font-semibold hover:text-primary transition-colors flex items-center gap-1">
+                <span class="material-symbols-outlined text-[20px]">logout</span>
+                Đăng xuất
+            </button>
+        </div>
+    </header>
+    <main class="flex-1 max-w-[1200px] mx-auto w-full px-4 py-8">
+        <!-- Hero Section -->
+        <section class="mb-8">
+            <h1 id="welcomeText" class="text-text-primary text-4xl font-extrabold tracking-tight mb-2">Xin chào, Sinh
+                viên</h1>
+            <p class="text-text-secondary text-lg">Chúc bạn có một buổi ôn tập và làm bài hiệu quả tại Quiz Web PTIT.
+            </p>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <div class="flex items-center gap-6 border-b border-slate-200 mb-8">
+            <button id="tabExams" class="pb-3 text-primary font-bold border-b-2 border-primary transition-colors">
+                Danh sách bài thi
+            </button>
+            <button id="tabHistory" class="pb-3 text-slate-500 font-semibold hover:text-slate-800 transition-colors">
+                Lịch sử làm bài
+            </button>
+        </div>
+
+        <!-- EXAM LIST SECTION -->
+        <div id="examListSection">
+            <!-- Search & Filter Section -->
+            <section class="mb-8 space-y-4">
+                <div class="relative w-full max-w-2xl">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-symbols-outlined text-text-secondary">search</span>
+                    </div>
+                    <input
+                        class="block w-full pl-10 pr-3 py-3 border border-[#CBD5E1] rounded-lg bg-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        placeholder="Tìm kiếm bài thi (ví dụ: Mạng máy tính...)" type="text" />
+                </div>
+                <div id="examFilters" class="flex flex-wrap gap-3">
+                    <button data-type="all"
+                        class="filter-btn px-5 py-2 rounded-full bg-primary text-white text-sm font-semibold shadow-sm hover:opacity-90 transition-opacity">
+                        Tất cả
+                    </button>
+                    <button data-type="luyen-tap"
+                        class="filter-btn px-5 py-2 rounded-full bg-white border border-border-light text-text-secondary text-sm font-semibold hover:bg-primary/5 hover:text-primary hover:border-primary transition-all">
+                        Luyện tập
+                    </button>
+                    <button data-type="giua-ky"
+                        class="filter-btn px-5 py-2 rounded-full bg-white border border-border-light text-text-secondary text-sm font-semibold hover:bg-primary/5 hover:text-primary hover:border-primary transition-all">
+                        Giữa kỳ
+                    </button>
+                    <button data-type="cuoi-ky"
+                        class="filter-btn px-5 py-2 rounded-full bg-white border border-border-light text-text-secondary text-sm font-semibold hover:bg-primary/5 hover:text-primary hover:border-primary transition-all">
+                        Cuối kỳ
+                    </button>
+                </div>
+            </section>
+            <!-- Exam Grid Header -->
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-text-primary text-2xl font-bold tracking-tight">Danh sách bài thi khả dụng</h2>
+                <span id="examCountText" class="text-text-secondary text-sm">0 bài thi tìm thấy</span>
+            </div>
+            <!-- Exam Grid -->
+            <div id="examGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamic Exam Cards JS -->
+            </div>
+        </div>
+
+        <!-- HISTORY SECTION -->
+        <div id="historySection" class="hidden">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm">
+                                <th class="py-4 px-6 font-semibold">Tên bài thi</th>
+                                <th class="py-4 px-6 font-semibold">Điểm số</th>
+                                <th class="py-4 px-6 font-semibold">Số câu đúng</th>
+                                <th class="py-4 px-6 font-semibold">Thời gian</th>
+                                <th class="py-4 px-6 font-semibold">Nộp lúc</th>
+                                <th class="py-4 px-6 font-semibold text-right">Danh sách</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody" class="text-sm">
+                            <!-- Data rendered via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center mt-auto">
+        <p class="text-slate-500 text-sm font-medium">2026 Quiz Web PTIT</p>
+    </footer>
+    <script src="../assets/js/student-dashboard.js"></script>
+</body>
+
+</html>

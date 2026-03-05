@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>PTIT Exam Results &amp; Review</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    
+    <link href="../assets/css/style.css" rel="stylesheet" />
+    <style>
+        .sticky-sidebar {
+            position: sticky;
+            top: 2rem;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 font-display">
+    <div class="relative flex min-h-screen flex-col">
+        <!-- Top App Bar -->
+        <header
+            class="sticky top-0 z-50 w-full flex items-center justify-between bg-white border-b border-solid border-slate-100 px-10 py-4">
+            <div class="flex items-center gap-3 text-primary">
+                <div class="text-primary flex items-center">
+                    <span class="material-symbols-outlined text-3xl">school</span>
+                </div>
+                <h1 class="text-primary text-xl font-bold leading-tight tracking-tight">Quiz Web PTIT</h1>
+            </div>
+            <div class="flex items-center gap-6">
+                <button id="btnHome"
+                    class="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                    Quay lại trang chủ
+                </button>
+                <div class="h-8 w-[1px] bg-slate-200"></div>
+                <div class="flex items-center gap-3">
+                    <div class="text-right hidden sm:block">
+                        <p id="studentName" class="text-sm font-bold text-slate-900">Người dùng</p>
+                    </div>
+                    <div
+                        class="size-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden">
+                        <span class="material-symbols-outlined text-primary">person</span>
+                    </div>
+                </div>
+                <a id="btnLogout"
+                    class="text-slate-600 text-sm font-semibold hover:text-primary transition-colors flex items-center gap-1"
+                    href="#">
+                    <span class="material-symbols-outlined text-[20px]">logout</span>
+                    Đăng xuất
+                </a>
+            </div>
+        </header>
+        <main class="flex-1 max-w-7xl mx-auto w-full px-4 lg:px-8 py-8">
+            <!-- Score Summary Card -->
+            <section class="mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-8 flex flex-col items-center text-center">
+                        <span id="examTitleDisplay"
+                            class="px-4 py-1.5 rounded-full bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider mb-4">Kết
+                            quả bài thi: Đang tải...</span>
+                        <h2 id="scoreDisplay" class="text-5xl font-extrabold text-neutral-slate mb-6">-.- <span
+                                class="text-2xl text-slate-400 font-medium">/ 10 Điểm</span></h2>
+                        <div
+                            class="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full max-w-2xl border-t border-slate-50 pt-8">
+                            <div class="flex flex-col items-center">
+                                <span class="material-symbols-outlined text-success mb-1">check_circle</span>
+                                <span class="text-slate-500 text-sm">Số câu đúng</span>
+                                <span id="correctCountDisplay" class="text-lg font-bold text-success">- / -</span>
+                            </div>
+                            <div class="flex flex-col items-center border-x border-slate-100">
+                                <span class="material-symbols-outlined text-error mb-1">cancel</span>
+                                <span class="text-slate-500 text-sm">Số câu sai</span>
+                                <span id="incorrectCountDisplay" class="text-lg font-bold text-error">- / -</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <span class="material-symbols-outlined text-slate-400 mb-1">schedule</span>
+                                <span class="text-slate-500 text-sm">Thời gian</span>
+                                <span id="timeSpentDisplay" class="text-lg font-bold text-slate-700">-- phút</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Review Section -->
+            <div class="flex flex-col gap-8">
+                <!-- Main Content (100%) -->
+                <div class="w-full space-y-6">
+                    <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span class="material-symbols-outlined">rule</span>
+                        Chi tiết bài làm
+                    </h3>
+
+                    <div id="reviewContainer" class="space-y-6">
+                        <!-- Questions will be dynamically rendered here -->
+                        <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm opacity-60">
+                            <p class="text-slate-800 font-medium italic">Đang tải chi tiết bài làm...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="bg-white border-t border-slate-200 py-6 text-center mt-auto">
+            <p class="text-slate-500 text-sm font-medium">2026 Quiz Web PTIT</p>
+        </footer>
+    </div>
+    <script src="../assets/js/result.js"></script>
+</body>
+
+</html>
