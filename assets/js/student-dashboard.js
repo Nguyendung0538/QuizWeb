@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="space-y-2 mb-6">
                             <div class="flex items-center gap-2 text-slate-500 text-sm">
                                 <span class="material-symbols-outlined text-[18px]">quiz</span>
-                                Số câu hỏi: ${exam.questionsCount || 0}
+                                Số câu hỏi: ${exam.questions ? exam.questions.length : 0}
                             </div>
                             <div class="flex items-center gap-2 text-slate-500 text-sm">
                                 <span class="material-symbols-outlined text-[18px]">schedule</span>
