@@ -270,4 +270,81 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('quiz_exams', JSON.stringify(exams));
     window.location.href = 'admin-dashboard.html';
   }
+
+  // --- Excel Import Logic ---
+  const importExcelBtn = document.getElementById('importExcelBtn');
+  const excelFileInput = document.getElementById('excelFileInput');
+  const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+
+  if (downloadTemplateBtn) {
+    downloadTemplateBtn.addEventListener('click', () => {
+      const templateData = [
+        ['Câu hỏi', 'Phương án A', 'Phương án B', 'Phương án C', 'Phương án D', 'Đáp án đúng (A/B/C/D)'],
+        ['1+1 bằng mấy?', '1', '2', '3', '4', 'B'],
+        ['Thủ đô của Việt Nam là?', 'Hà Nội', 'TP.HCM', 'Đà Nẵng', 'Huế', 'A']
+      ];
+      const ws = XLSX.utils.aoa_to_sheet(templateData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Template');
+      XLSX.writeFile(wb, 'Mau_Cau_Hoi.xlsx');
+    });
+  }
+
+  if (importExcelBtn && excelFileInput) {
+    importExcelBtn.addEventListener('click', () => {
+      excelFileInput.click();
+    });
+
+    excelFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = new Uint8Array(event.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+          // Assuming header in first row, start from index 1
+          // Format: [Question, Option A, Option B, Option C, Option D, Correct (A/B/C/D)]
+          let importedCount = 0;
+          jsonData.slice(1).forEach(row => {
+            if (row.length >= 6) {
+              const questionText = row[0];
+              const options = [row[1], row[2], row[3], row[4]];
+              const correctStr = String(row[5]).trim().toUpperCase();
+              
+              let correctOption = 0;
+              if (correctStr === 'A' || correctStr === '1') correctOption = 0;
+              else if (correctStr === 'B' || correctStr === '2') correctOption = 1;
+              else if (correctStr === 'C' || correctStr === '3') correctOption = 2;
+              else if (correctStr === 'D' || correctStr === '4') correctOption = 3;
+
+              addQuestionBlock({
+                text: questionText,
+                options: options,
+                correctOption: correctOption
+              });
+              importedCount++;
+            }
+          });
+
+          if (importedCount > 0) {
+            showCustomAlert(`Đã nhập thành công ${importedCount} câu hỏi từ Excel!`);
+          } else {
+            showCustomAlert('Không tìm thấy câu hỏi hợp lệ trong file Excel. Vui lòng kiểm tra lại định dạng!');
+          }
+        } catch (error) {
+          console.error('Error reading excel:', error);
+          showCustomAlert('Lỗi khi đọc file Excel. Vui lòng thử lại!');
+        }
+        // Reset input to allow selecting same file again
+        excelFileInput.value = '';
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  }
 });
