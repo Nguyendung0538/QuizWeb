@@ -1,6 +1,12 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL ERROR: JWT_SECRET is not defined in .env file');
+  process.exit(1);
+}
 
 const app = express();
 const port = process.env.PORT || 8080;
