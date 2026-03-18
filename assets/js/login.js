@@ -62,22 +62,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Logic Submittion & Validation
   if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       let isValid = true;
-      const username = usernameInput.value.trim();
+      const email = usernameInput.value.trim(); // Assume they type email
       const password = passwordInput.value.trim();
 
       // Clear previous errors
       usernameError.classList.add('hidden');
       passwordError.classList.add('hidden');
-      usernameError.textContent = 'Vui lòng nhập tên đăng nhập';
+      usernameError.textContent = 'Vui lòng nhập email đăng nhập';
       passwordError.textContent = 'Vui lòng nhập mật khẩu';
       usernameInput.classList.remove('border-red-500', 'focus:ring-red-500/20', 'focus:border-red-500');
       passwordInput.classList.remove('border-red-500', 'focus:ring-red-500/20', 'focus:border-red-500');
 
-      if (!username) {
+      if (!email) {
         usernameError.classList.remove('hidden');
         usernameInput.classList.add('border-red-500', 'focus:ring-red-500/20', 'focus:border-red-500');
         isValid = false;
@@ -90,28 +90,44 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (isValid) {
-        // Redirect to Admin Dashboard if username AND password are 'admin'
-        if (username === 'admin' && password === 'admin') {
-          localStorage.setItem('quiz_current_user', JSON.stringify({ role: 'admin', username: 'admin', name: 'Administrator' }));
-          window.location.href = 'admin-dashboard.html';
-        } else {
-          // Check local storage for student
-          const users = JSON.parse(localStorage.getItem('quiz_users')) || [];
-          const user = users.find(u => (u.username === username || u.email === username) && u.password === password);
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin mr-2">progress_activity</span> Đang xử lý...';
+        submitBtn.disabled = true;
 
-          if (user) {
-            // User found
-            localStorage.setItem('quiz_current_user', JSON.stringify(user));
-            window.location.href = 'student-dashboard.html';
-          } else {
-            // Invalid credentials
-            usernameError.textContent = 'Tài khoản hoặc mật khẩu không chính xác';
-            usernameError.classList.remove('hidden');
-            passwordError.textContent = 'Tài khoản hoặc mật khẩu không chính xác';
-            passwordError.classList.remove('hidden');
-            usernameInput.classList.add('border-red-500', 'focus:ring-red-500/20', 'focus:border-red-500');
-            passwordInput.classList.add('border-red-500', 'focus:ring-red-500/20', 'focus:border-red-500');
+        try {
+          // Check for local API availability natively
+          if (!window.API) {
+            console.error('API service not loaded!');
+            alert('Hệ thống đang lỗi kết nối. Không tìm thấy module API.');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            return;
           }
+
+          const response = await window.API.post('/auth/login', { email, password });
+          
+          // Save token and user info
+          localStorage.setItem('quiz_auth_token', response.token);
+          localStorage.setItem('quiz_current_user', JSON.stringify(response.user));
+
+          // Redirect based on role
+          if (response.user.role === 'admin') {
+             window.location.href = 'admin-dashboard.html';
+          } else {
+             window.location.href = 'student-dashboard.html';
+          }
+
+        } catch (error) {
+          console.error('Login error:', error);
+          // Show error
+          usernameError.textContent = error.message;
+          usernameError.classList.remove('hidden');
+          usernameInput.classList.add('border-red-500', 'focus:ring-red-500/20', 'focus:border-red-500');
+          passwordInput.classList.add('border-red-500', 'focus:ring-red-500/20', 'focus:border-red-500');
+        } finally {
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
         }
       }
     });

@@ -1,32 +1,6 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // 1. Initialize Mock Data if not exists
-  if (!localStorage.getItem('quiz_exams')) {
-    const initialExams = [
-      {
-        id: 'MAT101',
-        title: 'Giải tích 1',
-        type: 'cuoi-ky',
-        status: 'active',
-        questionsCount: 50
-      },
-      {
-        id: 'CSE202',
-        title: 'Lập trình C++',
-        type: 'giua-ky',
-        status: 'active',
-        questionsCount: 40
-      },
-      {
-        id: 'NET301',
-        title: 'Mạng máy tính',
-        type: 'luyen-tap',
-        status: 'closed',
-        questionsCount: 30
-      }
-    ];
-    localStorage.setItem('quiz_exams', JSON.stringify(initialExams));
-  }
+let cachedExams = [];
 
+document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('searchExamInput');
   const statusFilter = document.getElementById('statusExamFilter');
 
@@ -78,20 +52,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const confirmDeleteMultipleBtn = document.getElementById('confirmDeleteMultipleBtn');
   if (confirmDeleteMultipleBtn) {
-    confirmDeleteMultipleBtn.addEventListener('click', () => {
+    confirmDeleteMultipleBtn.addEventListener('click', async () => {
       const selectedBoxes = document.querySelectorAll('.exam-checkbox:checked');
       const idsToDelete = Array.from(selectedBoxes).map(cb => cb.dataset.id);
+      
+      const originalText = confirmDeleteMultipleBtn.innerHTML;
+      confirmDeleteMultipleBtn.innerHTML = 'Đang xóa...';
+      confirmDeleteMultipleBtn.disabled = true;
 
-      let exams = JSON.parse(localStorage.getItem('quiz_exams')) || [];
-      exams = exams.filter(exam => !idsToDelete.includes(exam.id));
-      localStorage.setItem('quiz_exams', JSON.stringify(exams));
-
-      closeMultiDeleteModal();
-
-      const selectAllCheckbox = document.getElementById('selectAllExams');
-      if (selectAllCheckbox) selectAllCheckbox.checked = false;
-
-      renderExams();
+      try {
+          // Delete one by one for now since we don't have a bulk delete API yet
+          for (let id of idsToDelete) {
+             await window.API.delete(`/exams/${id}`);
+          }
+          closeMultiDeleteModal();
+          const selectAllCheckbox = document.getElementById('selectAllExams');
+          if (selectAllCheckbox) selectAllCheckbox.checked = false;
+          
+          await fetchAndRenderExams();
+      } catch (error) {
+          console.error('Error deleting exams:', error);
+          alert('Có lỗi xảy ra khi xóa kỳ thi: ' + error.message);
+      } finally {
+          confirmDeleteMultipleBtn.innerHTML = originalText;
+          confirmDeleteMultipleBtn.disabled = false;
+      }
     });
   }
 
@@ -141,8 +126,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 300);
   }
 
-  renderExams();
+  fetchAndRenderExams();
 });
+
+async function fetchAndRenderExams() {
+    try {
+        if (!window.API) {
+            console.error('API service not loaded');
+            return;
+        }
+        cachedExams = await window.API.get('/exams');
+        
+        // Fetch questions count for each exam (optional but good for UI)
+        // For optimization, the backend GET /api/exams should ideally return question count
+        // Assuming we update the backend later, we'll just mock count for now or leave empty if not joining tables
+        
+        renderExams();
+    } catch (error) {
+        console.error('Failed to fetch exams:', error);
+        const tbody = document.getElementById('examsTableBody');
+        if(tbody) {
+            tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-red-500">Lỗi kết nối máy chủ: ${error.message}</td></tr>`;
+        }
+    }
+}
 
 function getStatusBadge(status) {
   if (status === 'active') {
@@ -185,7 +192,7 @@ function renderExams() {
   const examsTableBody = document.getElementById('examsTableBody');
   if (!examsTableBody) return;
 
-  let exams = JSON.parse(localStorage.getItem('quiz_exams')) || [];
+  let exams = cachedExams;
 
   const searchInput = document.getElementById('searchExamInput');
   const statusFilter = document.getElementById('statusExamFilter');
@@ -220,9 +227,11 @@ function renderExams() {
     }
   });
 
-  if (needsSync) {
-    localStorage.setItem('quiz_exams', JSON.stringify(exams));
-  }
+    if (needsSync) {
+      // In a real app we'd dispatch a PUT request to the backend to update statuses.
+      // But status is dynamically calculated on the backend anyway based on now() vs start/endtime.
+      // We'll just leave this as a frontend visual update for now, or you could call API put.
+    }
 
   // Calculate statistics
   const activeExamsCount = exams.filter(e => e.status === 'active').length;
@@ -298,6 +307,7 @@ function renderExams() {
                 <td class="px-6 py-4">
                     ${getStatusBadge(exam.status)}
                 </td>
+                <td class="px-6 py-4 text-sm">${exam.duration || 0} phút</td>
                 <td class="px-6 py-4 text-sm">${exam.questionsCount}</td>
                 <td class="px-6 py-4 text-right">
                     <div class="flex items-center justify-end gap-2">
@@ -351,7 +361,7 @@ function renderPagination(totalPages) {
 }
 
 function changePage(page) {
-  const exams = JSON.parse(localStorage.getItem('quiz_exams')) || [];
+  const exams = cachedExams;
   const statusFilter = document.getElementById('statusExamFilter');
   const searchInput = document.getElementById('searchExamInput');
   const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
@@ -376,12 +386,15 @@ function changePage(page) {
   }
 }
 
-function deleteExam(id) {
+async function deleteExam(id) {
   if (confirm('Bạn có chắc chắn muốn xóa kỳ thi này không?')) {
-    let exams = JSON.parse(localStorage.getItem('quiz_exams')) || [];
-    exams = exams.filter(exam => exam.id !== id);
-    localStorage.setItem('quiz_exams', JSON.stringify(exams));
-    renderExams();
+    try {
+        await window.API.delete(`/exams/${id}`);
+        await fetchAndRenderExams();
+    } catch(error) {
+        console.error('Error deleting exam:', error);
+        alert('Có lỗi xảy ra khi xóa kỳ thi: ' + error.message);
+    }
   }
 }
 

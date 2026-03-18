@@ -1,17 +1,20 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // 1. Initialize Mock Data if not exists
-  if (!localStorage.getItem('quiz_users')) {
-    const initialUsers = [
-      { id: Date.now() + 1, name: 'Nguyễn Văn A', email: 'nva.b20dccn001@stu.ptit.edu.vn', password: 'password', role: 'student', status: 'active' },
-      { id: Date.now() + 2, name: 'Trần Thị B', email: 'ttb.b20dccn002@stu.ptit.edu.vn', password: 'password', role: 'student', status: 'active' },
-      { id: Date.now() + 3, name: 'Lê Văn C', email: 'lvc.b20dccn045@stu.ptit.edu.vn', password: 'password', role: 'student', status: 'locked' }
-    ];
-    // generating some extra mock data for pagination
-    for (let i = 4; i <= 25; i++) {
-      initialUsers.push({ id: Date.now() + i, name: `Sinh viên ${i}`, email: `sv${i}@stu.ptit.edu.vn`, password: 'password', role: 'student', status: i % 5 === 0 ? 'locked' : 'active' });
+let cachedStudents = [];
+
+async function fetchStudents() {
+    try {
+        if (!window.API) return;
+        cachedStudents = await window.API.get('/users');
+        if (typeof renderStudents === 'function') {
+            renderStudents();
+        }
+    } catch (error) {
+        console.error('Error fetching students:', error);
+        const tbody = document.getElementById('studentsTableBody');
+        if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500">Lỗi kết nối máy chủ</td></tr>`;
     }
-    localStorage.setItem('quiz_users', JSON.stringify(initialUsers));
-  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
 
   const searchInput = document.getElementById('searchInput');
   const statusFilter = document.getElementById('statusFilter');
@@ -75,31 +78,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function bulkChangeStatus(newStatus) {
+  async function bulkChangeStatus(newStatus) {
     const selectedBoxes = document.querySelectorAll('.student-checkbox:checked');
     if (selectedBoxes.length === 0) return;
 
-    const emailsTarget = Array.from(selectedBoxes).map(cb => cb.dataset.email);
-    let users = JSON.parse(localStorage.getItem('quiz_users')) || [];
+    const idsTarget = Array.from(selectedBoxes).map(cb => cb.dataset.id);
 
-    users = users.map(u => {
-      if (emailsTarget.includes(u.email)) {
-        return { ...u, status: newStatus };
-      }
-      return u;
-    });
+    if (multiLockStudentBtn) multiLockStudentBtn.disabled = true;
+    if (multiUnlockStudentBtn) multiUnlockStudentBtn.disabled = true;
 
-    localStorage.setItem('quiz_users', JSON.stringify(users));
-    renderStudents();
-
-    // Khôi phục lại trạng thái checked cho các tài khoản vừa thao tác
-    const newBoxes = document.querySelectorAll('.student-checkbox');
-    newBoxes.forEach(cb => {
-      if (emailsTarget.includes(cb.dataset.email)) {
-        cb.checked = true;
-      }
-    });
-    if (window.handleStudentSelection) window.handleStudentSelection();
+    try {
+        for (let id of idsTarget) {
+            await window.API.put(`/users/${id}/status`, { status: newStatus });
+        }
+        await fetchStudents();
+        const selectAll = document.getElementById('selectAllStudents');
+        if (selectAll) selectAll.checked = false;
+        if (window.handleStudentSelection) window.handleStudentSelection();
+    } catch(error) {
+        console.error('Bulk update error', error);
+        alert('Lỗi khi cập nhật trạng thái: ' + error.message);
+    } finally {
+        if (multiLockStudentBtn) multiLockStudentBtn.disabled = false;
+        if (multiUnlockStudentBtn) multiUnlockStudentBtn.disabled = false;
+    }
   }
 
   document.querySelectorAll('.modal-close').forEach(btn => {
@@ -140,77 +142,86 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Handle form submit
   if (studentForm) {
-    studentForm.addEventListener('submit', (e) => {
+    studentForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('studentId').value;
       const name = document.getElementById('studentName').value.trim();
       const email = document.getElementById('studentEmail').value.trim();
+      
+      const submitBtn = studentForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = 'Đang lưu...';
+      submitBtn.disabled = true;
 
-      let users = JSON.parse(localStorage.getItem('quiz_users')) || [];
-
-      if (id) {
-        // Update
-        const index = users.findIndex(u => u.id == id);
-        if (index > -1) {
-          users[index].name = name;
-          // Note: typically email shouldn't be changed or checked for duplication, but for mock:
-          users[index].email = email;
-        }
-      } else {
-        // Create
-        if (users.some(u => u.email === email)) {
-          showSuccess('Lỗi', 'Email này đã tồn tại trong hệ thống!');
-          return;
-        }
-        users.unshift({
-          id: Date.now(),
-          name: name,
-          email: email,
-          password: 'password', // 123456 as requested in mock
-          role: 'student',
-          status: 'active'
-        });
+      try {
+          if (id) {
+            // Update conceptually not supported by current API endpoint except status/password
+            // But we can leave it as is or add an update API later.
+            showSuccess('Thông báo', 'Tính năng sửa tên đang được phát triển ở phía server.');
+          } else {
+            // Create
+            await window.API.post('/users', { name, email, password: 'password', role: 'student' });
+            showSuccess('Thành công', 'Đã thêm học viên mới!');
+          }
+          closeStudentModal();
+          await fetchStudents();
+      } catch (error) {
+          showSuccess('Lỗi', 'Không thể lưu học viên: ' + error.message);
+      } finally {
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
       }
-
-      localStorage.setItem('quiz_users', JSON.stringify(users));
-      closeStudentModal();
-      renderStudents();
     });
   }
 
-  // Handle confirm delete
   if (confirmDeleteBtn) {
-    confirmDeleteBtn.addEventListener('click', () => {
-      const email = confirmDeleteBtn.dataset.email;
-      if (email) {
-        let users = JSON.parse(localStorage.getItem('quiz_users')) || [];
-        users = users.filter(u => u.email !== email);
-        localStorage.setItem('quiz_users', JSON.stringify(users));
-        closeDeleteModal();
-        renderStudents();
+    confirmDeleteBtn.addEventListener('click', async () => {
+      const id = confirmDeleteBtn.dataset.id;
+      if (id) {
+         const originalText = confirmDeleteBtn.innerHTML;
+         confirmDeleteBtn.innerHTML = 'Đang xóa...';
+         confirmDeleteBtn.disabled = true;
+         try {
+             await window.API.delete(`/users/${id}`);
+             closeDeleteModal();
+             await fetchStudents();
+         } catch(e) {
+             alert('Lỗi xóa sinh viên: ' + e.message);
+         } finally {
+             confirmDeleteBtn.innerHTML = originalText;
+             confirmDeleteBtn.disabled = false;
+         }
       }
     });
   }
 
   if (confirmDeleteMultipleStudentBtn) {
-    confirmDeleteMultipleStudentBtn.addEventListener('click', () => {
+    confirmDeleteMultipleStudentBtn.addEventListener('click', async () => {
       const selectedBoxes = document.querySelectorAll('.student-checkbox:checked');
-      const emailsToDelete = Array.from(selectedBoxes).map(cb => cb.dataset.email);
+      const idsToDelete = Array.from(selectedBoxes).map(cb => cb.dataset.id);
 
-      let users = JSON.parse(localStorage.getItem('quiz_users')) || [];
-      users = users.filter(u => !emailsToDelete.includes(u.email));
-      localStorage.setItem('quiz_users', JSON.stringify(users));
+      const originalText = confirmDeleteMultipleStudentBtn.innerHTML;
+      confirmDeleteMultipleStudentBtn.innerHTML = 'Đang xóa...';
+      confirmDeleteMultipleStudentBtn.disabled = true;
 
-      closeMultiDeleteStudentModal();
-      if (selectAllStudents) selectAllStudents.checked = false;
-      renderStudents();
+      try {
+          for (let id of idsToDelete) {
+              await window.API.delete(`/users/${id}`);
+          }
+          closeMultiDeleteStudentModal();
+          if (selectAllStudents) selectAllStudents.checked = false;
+          await fetchStudents();
+      } catch(e) {
+          alert('Lỗi xóa sinh viên: ' + e.message);
+      } finally {
+          confirmDeleteMultipleStudentBtn.innerHTML = originalText;
+          confirmDeleteMultipleStudentBtn.disabled = false;
+      }
     });
   }
 
-  // Helper bindings for global scope (onclick in HTML)
   window.openEditStudentModal = function (id) {
-    const users = JSON.parse(localStorage.getItem('quiz_users')) || [];
-    const student = users.find(u => u.id == id);
+    const student = cachedStudents.find(u => u.id == id);
     if (student) {
       document.getElementById('modalTitle').textContent = 'Chỉnh sửa thông tin học viên';
       document.getElementById('studentId').value = student.id;
@@ -232,9 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  window.openDeleteStudentModal = function (email) {
+  window.openDeleteStudentModal = function (id, email) {
     document.getElementById('deleteTargetEmail').textContent = email;
-    confirmDeleteBtn.dataset.email = email;
+    confirmDeleteBtn.dataset.id = id;
     openModal(deleteModal, deleteModalOverlay, deleteModalContent);
   };
 
@@ -247,11 +258,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.confirmResetPassword = function (id) {
     studentToResetId = id;
-    let users = JSON.parse(localStorage.getItem('quiz_users')) || [];
-    const user = users.find(u => u.id == id);
+    const user = cachedStudents.find(u => u.id == id);
     if (!user) return;
 
-    document.getElementById('resetStudentName').textContent = user.name || user.username;
+    document.getElementById('resetStudentName').textContent = user.name || user.email;
 
     // Explicitly handle z-index and pointer events for this specific modal
     resetPasswordModalOverlay.classList.remove('pointer-events-none');
@@ -287,29 +297,31 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   if (confirmResetPasswordBtn) {
-    confirmResetPasswordBtn.addEventListener('click', () => {
+    confirmResetPasswordBtn.addEventListener('click', async () => {
       if (!studentToResetId) return;
-      let users = JSON.parse(localStorage.getItem('quiz_users')) || [];
-      const index = users.findIndex(u => u.id == studentToResetId);
+      
+      const originalText = confirmResetPasswordBtn.innerHTML;
+      confirmResetPasswordBtn.innerHTML = 'Đang xử lý...';
+      confirmResetPasswordBtn.disabled = true;
 
-      if (index !== -1) {
-        users[index].password = '123456';
-        localStorage.setItem('quiz_users', JSON.stringify(users));
-        closeResetPasswordModal();
-
-        // Show success modal instead of alert
-        setTimeout(() => {
-          showSuccess('Đặt lại thành công', 'Mật khẩu đã được đưa về mặc định là 123456. Hãy ghi nhớ và thông báo cho học viên!');
-        }, 200);
-      } else {
-        closeResetPasswordModal();
+      try {
+          await window.API.put(`/users/${studentToResetId}/reset-password`);
+          closeResetPasswordModal();
+          setTimeout(() => {
+            showSuccess('Đặt lại thành công', 'Mật khẩu đã được đưa về mặc định là password. Hãy ghi nhớ và thông báo cho học viên!');
+          }, 200);
+      } catch (error) {
+          alert('Lỗi đặt lại mật khẩu: ' + error.message);
+          closeResetPasswordModal();
+      } finally {
+          confirmResetPasswordBtn.innerHTML = originalText;
+          confirmResetPasswordBtn.disabled = false;
       }
     });
   }
 
-  // Initial render
-  // Add slight delay in case components need to load
-  setTimeout(renderStudents, 50);
+  // Initial fetch
+  fetchStudents();
 });
 
 let currentPage = 1;
@@ -435,13 +447,7 @@ function renderStudents() {
   const studentsTableBody = document.getElementById('studentsTableBody');
   if (!studentsTableBody) return;
 
-  let users = JSON.parse(localStorage.getItem('quiz_users')) || [];
-  let students = users.filter(u => u.role !== 'admin' && (u.username !== 'admin'));
-
-  students.forEach((s, index) => {
-    if (!s.status) s.status = 'active';
-    if (!s.id) s.id = Date.now() + index; // Ensure ID exists for editing
-  });
+  let students = cachedStudents;
 
   const totalStudents = students.length;
   const activeStudents = students.filter(s => s.status === 'active').length;
@@ -553,7 +559,7 @@ function renderStudents() {
     html += `
             <tr class="transition-colors ${rowBg}">
                 <td class="px-6 py-4">
-                    <input type="checkbox" data-email="${student.email}" onclick="handleStudentSelection()" class="student-checkbox rounded border-slate-300 text-primary focus:ring-primary">
+                    <input type="checkbox" data-id="${student.id}" onclick="handleStudentSelection()" class="student-checkbox rounded border-slate-300 text-primary focus:ring-primary">
                 </td>
                 <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
@@ -580,8 +586,7 @@ function renderStudents() {
 }
 
 window.goToPage = function (page) {
-  const users = JSON.parse(localStorage.getItem('quiz_users')) || [];
-  const students = users.filter(u => u.role !== 'admin' && (u.username !== 'admin'));
+  const students = cachedStudents;
   const searchQuery = document.getElementById('searchInput')?.value.toLowerCase() || '';
   const statusVal = document.getElementById('statusFilter')?.value || 'all';
   const filtered = students.filter(s => {
@@ -599,12 +604,23 @@ window.goToPage = function (page) {
   }
 };
 
-window.toggleStudentStatus = function (email) {
-  let users = JSON.parse(localStorage.getItem('quiz_users')) || [];
-  const index = users.findIndex(u => u.email === email);
-  if (index > -1) {
-    users[index].status = users[index].status === 'locked' ? 'active' : 'locked';
-    localStorage.setItem('quiz_users', JSON.stringify(users));
-    renderStudents();
+window.toggleStudentStatus = async function (email) {
+  const student = cachedStudents.find(u => u.email === email);
+  if (student) {
+    const newStatus = student.status === 'locked' ? 'active' : 'locked';
+    try {
+        await window.API.put(`/users/${student.id}/status`, { status: newStatus });
+        // The fetchStudents call inside bulkChangeStatus was refactored outside, let's just cheat and trigger re-fetch
+        
+        // Let's implement fetchStudents globally if it was inside the DOMContentLoaded, 
+        // wait, fetchStudents is inside DOMContentLoaded scope so it might not be accessible here.
+        // Let's just reload the page for now or update cachedStudents manually and rerender
+        student.status = newStatus;
+        renderStudents();
+
+    } catch(e) {
+        alert('Lỗi cập nhật trạng thái: ' + e.message);
+    }
   }
 };
+

@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="space-y-2 mb-6">
                             <div class="flex items-center gap-2 text-slate-500 text-sm">
                                 <span class="material-symbols-outlined text-[18px]">quiz</span>
-                                Số câu hỏi: ${exam.questions ? exam.questions.length : 0}
+                                Số câu hỏi: ${exam.questionsCount || 0}
                             </div>
                             <div class="flex items-center gap-2 text-slate-500 text-sm">
                                 <span class="material-symbols-outlined text-[18px]">schedule</span>
@@ -103,14 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } else {
         // Time hit zero! Change status to active
-        const allExams = JSON.parse(localStorage.getItem('quiz_exams')) || [];
-        const examIdx = allExams.findIndex(e => e.id === examId);
-
-        if (examIdx !== -1 && allExams[examIdx].status === 'upcoming') {
-          allExams[examIdx].status = 'active';
-          localStorage.setItem('quiz_exams', JSON.stringify(allExams));
-          needsRefresh = true;
-        }
+        // Normally we'd call API to update status, or let backend calculate dynamically.
+        // For frontend UI, we'll just reload the exams from the backend to get fresh true status.
+        needsRefresh = true;
       }
     });
 
@@ -123,8 +118,10 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(updateCountdowns, 1000);
   updateCountdowns(); // Initial call
 
-  function applyFilters() {
-    const examsForFiltering = JSON.parse(localStorage.getItem('quiz_exams')) || [];
+  let cachedExams = [];
+
+  async function applyFilters() {
+    let examsForFiltering = cachedExams;
     let filtered = examsForFiltering.filter(ex => ex.status !== 'closed');
 
     if (currentSearch) {
@@ -138,8 +135,19 @@ document.addEventListener('DOMContentLoaded', () => {
     renderExams(filtered);
   }
 
+  async function initDashboard() {
+     try {
+         if(!window.API) return;
+         cachedExams = await window.API.get('/exams');
+         applyFilters();
+     } catch (e) {
+         console.error("Failed to load exams", e);
+         if (examGrid) examGrid.innerHTML = '<div class="col-span-full py-20 text-center text-red-500 font-medium">Lỗi kết nối máy chủ.</div>';
+     }
+  }
+
   // Initial render
-  applyFilters();
+  initDashboard();
 
   // Search filter
   const searchInput = document.querySelector('input[placeholder*="Tìm kiếm"]');
@@ -189,61 +197,59 @@ document.addEventListener('DOMContentLoaded', () => {
     renderHistory();
   });
 
-  function renderHistory() {
-    let allSubmissions = JSON.parse(localStorage.getItem('quiz_submissions')) || [];
+  async function renderHistory() {
+      historyTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-8">Đang tải...</td></tr>`;
+      
+      try {
+          if(!window.API) return;
+          const userSubmissions = await window.API.get(`/submissions/student/${currentUser.id}`);
+          
+          if (userSubmissions.length === 0) {
+              historyTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="py-12 text-center text-slate-500">
+                                Bạn chưa hoàn thành bài thi nào.
+                            </td>
+                        </tr>
+                    `;
+              return;
+          }
 
-    // Auto-repair NaN timeSpent labels in localStorage
-    let hasNaN = false;
-    allSubmissions = allSubmissions.map(sub => {
-      if (typeof sub.timeSpent === 'string' && sub.timeSpent.includes('NaN')) {
-        hasNaN = true;
-        return { ...sub, timeSpent: sub.timeSpent.replace('NaN phút ', '') };
-      }
-      return sub;
-    });
-    if (hasNaN) localStorage.setItem('quiz_submissions', JSON.stringify(allSubmissions));
+          historyTableBody.innerHTML = userSubmissions.map(sub => `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                        <td class="py-4 px-6">
+                            <div class="font-bold text-slate-900">${sub.exam_title || `Kỳ thi ID: ${sub.exam_id}`}</div>
+                        </td>
+                        <td class="py-4 px-6 text-slate-800 font-bold">
+                            ${parseFloat(sub.score).toFixed(1)} <span class="text-xs text-slate-400 font-normal">/ 10</span>
+                        </td>
+                        <td class="py-4 px-6 text-slate-600">
+                            ${sub.correct_answers} / ${sub.total_questions}
+                        </td>
+                        <td class="py-4 px-6 text-slate-600">
+                            ${sub.time_spent} giây
+                        </td>
+                        <td class="py-4 px-6 text-slate-500 text-xs">
+                            ${new Date(sub.submitted_at).toLocaleString('vi-VN')}
+                        </td>
+                        <td class="py-4 px-6 text-right">
+                            <button onclick="viewResult(${sub.id})" class="text-primary hover:text-primary/80 font-semibold text-sm transition-colors">
+                                Xem chi tiết
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
 
-    // Filter submissions for current user
-    const userSubmissions = allSubmissions.filter(sub =>
-      sub.studentId === currentUser.id ||
-      (sub.studentName === currentUser.name && sub.studentEmail === currentUser.email)
-    ).reverse(); // Newest first
-
-    if (userSubmissions.length === 0) {
-      historyTableBody.innerHTML = `
+      } catch (error) {
+          console.error("Lỗi tải lịch sử:", error);
+           historyTableBody.innerHTML = `
                 <tr>
-                    <td colspan="6" class="py-12 text-center text-slate-500">
-                        Bạn chưa hoàn thành bài thi nào.
+                    <td colspan="6" class="py-12 text-center text-red-500">
+                        Lỗi tải dữ liệu lịch sử.
                     </td>
                 </tr>
             `;
-      return;
-    }
-
-    historyTableBody.innerHTML = userSubmissions.map(sub => `
-            <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                <td class="py-4 px-6">
-                    <div class="font-bold text-slate-900">${sub.examTitle}</div>
-                </td>
-                <td class="py-4 px-6 text-slate-800 font-bold">
-                    ${sub.score.toFixed(1)} <span class="text-xs text-slate-400 font-normal">/ 10</span>
-                </td>
-                <td class="py-4 px-6 text-slate-600">
-                    ${sub.correctAnswers} / ${sub.totalQuestions}
-                </td>
-                <td class="py-4 px-6 text-slate-600">
-                    ${(sub.timeSpent || '0s').replace('NaN phút ', '')}
-                </td>
-                <td class="py-4 px-6 text-slate-500 text-xs">
-                    ${sub.submittedAt}
-                </td>
-                <td class="py-4 px-6 text-right">
-                    <button onclick="viewResult(${sub.id})" class="text-primary hover:text-primary/80 font-semibold text-sm transition-colors">
-                        Xem chi tiết
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+      }
   }
 
   window.viewResult = function (submissionId) {

@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const confirmError = document.getElementById('confirmError');
 
   if (registerForm) {
-    registerForm.addEventListener('submit', (e) => {
+    registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       let isValid = true;
 
@@ -57,31 +57,33 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (isValid) {
-        const users = JSON.parse(localStorage.getItem('quiz_users')) || [];
-        // Check if email already exists
-        const userExists = users.some(u => u.email === email);
+        const submitBtn = registerForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin mr-2">progress_activity</span> Đang xử lý...';
+        submitBtn.disabled = true;
 
-        if (userExists) {
-          emailError.textContent = 'Email này đã được đăng ký!';
-          emailError.classList.remove('hidden');
-          emailInput.classList.add('border-red-500', 'focus:ring-red-500/20', 'focus:border-red-500');
-        } else {
-          // Create new user with incremental ID
-          const newUser = {
-            id: users.length + 1,
-            username: email, // use email as username for login
-            email: email,
-            password: password,
-            name: name,
-            role: 'student'
-          };
+        try {
+          if (!window.API) {
+            alert('Hệ thống đang lỗi kết nối. Không tìm thấy module API.');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            return;
+          }
 
-          users.push(newUser);
-          localStorage.setItem('quiz_users', JSON.stringify(users));
-
+          const response = await window.API.post('/auth/register', { name, email, password });
+          
           showCustomAlert('Đăng ký tài khoản thành công! Lần tới bạn có thể sử dụng email để đăng nhập.', () => {
             window.location.href = 'login.html';
           });
+          
+        } catch (error) {
+          console.error('Register error:', error);
+          emailError.textContent = error.message;
+          emailError.classList.remove('hidden');
+          emailInput.classList.add('border-red-500', 'focus:ring-red-500/20', 'focus:border-red-500');
+        } finally {
+           submitBtn.innerHTML = originalText;
+           submitBtn.disabled = false;
         }
       }
     });

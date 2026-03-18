@@ -16,30 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // 3. Load Exam Data
-  const exams = JSON.parse(localStorage.getItem('quiz_exams')) || [];
-  const exam = exams.find(e => e.id === examId);
-
-  if (!exam) {
-    alert('Kỳ thi không tồn tại!');
-    window.location.href = 'student-dashboard.html';
-    return;
-  }
-
-  if (exam.status !== 'active') {
-    alert('Kỳ thi này hiện chưa mở hoặc đã kết thúc.');
-    window.location.href = 'student-dashboard.html';
-    return;
-  }
-
-  // 4. Initialize State
-  const questions = exam.questions || [];
+  // 3. Load Exam Data via API
+  let exam = null;
+  let questions = [];
   let currentQuestionIndex = 0;
-  let answers = new Array(questions.length).fill(null);
-  let timeRemaining = (exam.duration || 60) * 60; // Convert to seconds
+  let answers = [];
+  let timeRemaining = 0;
   let timerInterval = null;
 
-  // 5. DOM Elements
   const titleEl = document.getElementById('examTitleHeader');
   const timerEl = document.getElementById('examTimer');
   const questionContainer = document.getElementById('questionContainer');
@@ -57,16 +41,56 @@ document.addEventListener('DOMContentLoaded', () => {
   const cancelSubmitBtn = document.getElementById('cancelSubmitBtn');
   const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
 
-  // Setup Header
-  if (titleEl) titleEl.textContent = `Bài thi: ${exam.title}`;
+  initExam();
 
-  // Start Timer
-  startTimer();
+  async function initExam() {
+      try {
+          if(!window.API) {
+              alert('Lỗi hệ thống: Chưa tải được thư viện API.');
+              window.location.href = 'student-dashboard.html';
+              return;
+          }
 
-  // Render initial question and palette
-  renderPalette();
-  renderQuestion(currentQuestionIndex);
-  updateControls();
+          exam = await window.API.get(`/exams/${examId}/start`);
+          
+          if (!exam) {
+            alert('Kỳ thi không tồn tại!');
+            window.location.href = 'student-dashboard.html';
+            return;
+          }
+
+          if (exam.status !== 'active') {
+            alert('Kỳ thi này hiện chưa mở hoặc đã kết thúc.');
+            window.location.href = 'student-dashboard.html';
+            return;
+          }
+
+          questions = exam.questions || [];
+          answers = new Array(questions.length).fill(null);
+          timeRemaining = (exam.duration || 60) * 60; // Convert to seconds
+
+          // Setup Header
+          if (titleEl) titleEl.textContent = `Bài thi: ${exam.title}`;
+
+          // Start Timer
+          startTimer();
+
+          // Render initial question and palette
+          renderPalette();
+          if (questions.length > 0) {
+              renderQuestion(currentQuestionIndex);
+          } else {
+              if (questionContainer) questionContainer.innerHTML = '<p class="text-center text-slate-500 py-8">Kỳ thi này chưa có câu hỏi nào.</p>';
+          }
+          updateControls();
+
+      } catch (error) {
+          console.error("Lỗi khi tải đề thi:", error);
+          alert('Không thể tải bài thi: ' + error.message);
+          window.location.href = 'student-dashboard.html';
+      }
+  }
+
 
   // Event Listeners
   prevBtn?.addEventListener('click', () => {
@@ -192,7 +216,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const labels = ['A', 'B', 'C', 'D'];
 
     let optionsHtml = '';
-    q.options.forEach((opt, optIndex) => {
+    const formattedOptions = [q.option_a, q.option_b, q.option_c, q.option_d];
+
+    formattedOptions.forEach((opt, optIndex) => {
       const isChecked = selectedOption === optIndex;
       const borderClass = isChecked
         ? 'border-2 border-primary bg-primary/5'
@@ -247,62 +273,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function processSubmission() {
+  async function processSubmission() {
     clearInterval(timerInterval);
 
-    // Calculate score
-    let correctCount = 0;
-    questions.forEach((q, index) => {
-      if (answers[index] === q.correctOption) {
-        correctCount++;
-      }
-    });
+    // Calculate time spent (Duration in seconds - time remaining)
+    const timeSpent = ((exam.duration || 60) * 60) - timeRemaining;
 
-    const score = questions.length > 0 ? (correctCount / questions.length) * 10 : 0;
-
-    // Time spent
-    const totalDurationSeconds = Number(exam.duration || 60) * 60;
-    const timeSpentSeconds = totalDurationSeconds - Number(timeRemaining || 0);
-    const tsMin = Math.floor(timeSpentSeconds / 60) || 0;
-    const tsSec = timeSpentSeconds % 60 || 0;
-    const formattedTimeSpent = `${tsMin > 0 ? tsMin + ' phút ' : ''}${tsSec}s`;
-
-    // Format Date
-    const now = new Date();
-    const formattedDate = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} ${now.getHours() >= 12 ? 'PM' : 'AM'}, ${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear()}`;
-
-    // Structure Answers
-    const structuredAnswers = questions.map((q, index) => ({
+    // Structure Answers for Backend (using camelCase to match backend expectations)
+    const formattedAnswers = questions.map((q, index) => ({
       questionId: q.id,
-      selectedOption: answers[index] !== null && answers[index] !== undefined ? answers[index] : -1,
-      isCorrect: answers[index] === q.correctOption
+      selectedOption: (answers[index] !== null && answers[index] !== undefined) ? answers[index] : -1
     }));
 
-    // Create Submission Record
-    const submissions = JSON.parse(localStorage.getItem('quiz_submissions')) || [];
-    const newSubmission = {
-      id: Date.now(),
-      studentId: currentUser.id || 'N/A',
-      studentName: currentUser.name || currentUser.username,
-      studentEmail: currentUser.email || 'N/A',
-      examId: exam.id,
-      examTitle: exam.title,
-      score: Number(score.toFixed(1)),
-      correctAnswers: correctCount,
-      totalQuestions: questions.length,
-      timeSpent: formattedTimeSpent,
-      submittedAt: formattedDate,
-      userAnswers: answers, // For fallback
-      answers: structuredAnswers
-    };
+    try {
+        if (!window.API) return;
 
-    submissions.push(newSubmission);
-    localStorage.setItem('quiz_submissions', JSON.stringify(submissions));
+        // Post to backend API
+        const response = await window.API.post('/submissions', {
+            examId: exam.id,
+            timeSpent: timeSpent,
+            answers: formattedAnswers
+        });
 
-    // Save to current session so the results page can load it immediately
-    sessionStorage.setItem('last_submission_id', newSubmission.id);
+        // Save submitted ID to session for the result page to fetch
+        sessionStorage.setItem('last_submission_id', response.submissionId || response.insertId || response.id || (response.result ? response.result.id : null));
 
-    // Redirect to result page directly without alert
-    window.location.href = 'result.html';
+        // Redirect to result page
+        window.location.href = 'result.html';
+        
+    } catch (error) {
+        console.error("Lỗi khi nộp bài:", error);
+        alert('Lỗi nộp bài: ' + error.message);
+    }
   }
 });

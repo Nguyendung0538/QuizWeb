@@ -1,3 +1,7 @@
+let students = [];
+let submissions = [];
+let exams = [];
+
 document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('studentSearchInput');
   const searchResults = document.getElementById('studentSearchResults');
@@ -6,32 +10,36 @@ document.addEventListener('DOMContentLoaded', () => {
   const historyBody = document.getElementById('studentHistoryTableBody');
   const examDetailModal = document.getElementById('examDetailModal');
 
-  let allUsers = JSON.parse(localStorage.getItem('quiz_users')) || [];
-  let students = allUsers.filter(u => u.role === 'student');
-  let submissions = JSON.parse(localStorage.getItem('quiz_submissions')) || [];
+  async function fetchResultsData() {
+      try {
+          if (!window.API) return;
+          
+          const [fetchedUsers, fetchedSubmissions, fetchedExams] = await Promise.all([
+              window.API.get('/users'),
+              window.API.get('/submissions/all'),
+              window.API.get('/exams')
+          ]);
+          
+          const allUsers = fetchedUsers || [];
+          students = allUsers.filter(u => u.role === 'student');
+          submissions = fetchedSubmissions || [];
+          exams = fetchedExams || [];
 
-  // Auto-repair NaN timeSpent labels
-  let hasNaN = false;
-  submissions = submissions.map(sub => {
-    if (typeof sub.timeSpent === 'string' && sub.timeSpent.includes('NaN')) {
-      hasNaN = true;
-      return { ...sub, timeSpent: sub.timeSpent.replace('NaN phút ', '') };
-    }
-    return sub;
-  });
-  if (hasNaN) localStorage.setItem('quiz_submissions', JSON.stringify(submissions));
-
-  let exams = JSON.parse(localStorage.getItem('quiz_exams')) || [];
-
-  // Check if we came from admin-students page with a specific email
-  const urlParams = new URLSearchParams(window.location.search);
-  const emailToLoad = urlParams.get('email');
-  if (emailToLoad) {
-    const student = students.find(s => s.email === emailToLoad);
-    if (student) {
-      selectStudent(student);
-    }
+          // Check if we came from admin-students page with a specific email
+          const urlParams = new URLSearchParams(window.location.search);
+          const emailToLoad = urlParams.get('email');
+          if (emailToLoad) {
+            const student = students.find(s => s.email === emailToLoad);
+            if (student) {
+              selectStudent(student);
+            }
+          }
+      } catch (error) {
+          console.error("Lỗi khi tải dữ liệu:", error);
+      }
   }
+
+  fetchResultsData();
 
   // Handle Search Input
   if (searchInput) {
@@ -107,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('studentEmailDisplay').textContent = student.email;
 
     // Fetch their submissions
-    const studentSubs = submissions.filter(sub => sub.studentEmail === student.email || sub.studentId === student.id).sort((a, b) => b.id - a.id);
+    const studentSubs = submissions.filter(sub => sub.student_email === student.email || sub.student_id === student.id).sort((a, b) => b.id - a.id);
 
     document.getElementById('studentTotalExamsDisplay').textContent = studentSubs.length;
 
@@ -119,22 +127,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let html = '';
     studentSubs.forEach(sub => {
-      const isPassed = sub.score >= 5;
+      const scoreNum = parseFloat(sub.score || 0);
+      const isPassed = scoreNum >= 5;
       const statusHtml = isPassed
         ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-600"><span class="size-1.5 rounded-full bg-emerald-500"></span>Đạt</span>`
         : `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-600"><span class="size-1.5 rounded-full bg-amber-500"></span>Chưa đạt</span>`;
 
       html += `
                 <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4 font-medium text-sm text-slate-900">${sub.examTitle}</td>
-                    <td class="px-6 py-4 text-sm text-slate-500">${sub.submittedAt}</td>
-                    <td class="px-6 py-4 text-sm text-slate-500">${sub.timeSpent}</td>
+                    <td class="px-6 py-4 font-medium text-sm text-slate-900">${sub.exam_title || 'N/A'}</td>
+                    <td class="px-6 py-4 text-sm text-slate-500">${new Date(sub.submitted_at).toLocaleString('vi-VN')}</td>
+                    <td class="px-6 py-4 text-sm text-slate-500">${sub.time_spent || 0}s</td>
                     <td class="px-6 py-4 text-center">${statusHtml}</td>
                     <td class="px-6 py-4 text-right">
-                        <span class="inline-block px-2 py-1 rounded font-bold text-sm ${isPassed ? 'text-emerald-700 bg-emerald-50' : 'text-red-700 bg-red-50'}">${sub.score.toFixed(1)}</span>
+                        <span class="inline-block px-2 py-1 rounded font-bold text-sm ${isPassed ? 'text-emerald-700 bg-emerald-50' : 'text-red-700 bg-red-50'}">${scoreNum.toFixed(1)}</span>
                     </td>
                     <td class="px-6 py-4 text-center relative">
-                        <button onclick="window.viewExamDetail(${sub.id})" class="text-sm font-semibold text-primary hover:text-red-700 transition-colors hover:underline">Xem chi tiết</button>
+                        <button onclick="window.viewExamDetail('${sub.id}')" class="text-sm font-semibold text-primary hover:text-red-700 transition-colors hover:underline">Xem chi tiết</button>
                     </td>
                 </tr>
             `;
@@ -143,43 +152,38 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Detail Modal Logic
-  window.viewExamDetail = function (submissionId) {
-    const sub = submissions.find(s => s.id === submissionId);
-    if (!sub) return;
+  window.viewExamDetail = async function (submissionId) {
+    try {
+        if (!window.API) return;
+        const sub = await window.API.get(`/submissions/${submissionId}`);
+        if (!sub) return;
 
-    const examMatch = exams.find(e => e.id === sub.examId);
-    if (!examMatch || !examMatch.questions) {
-      alert('Không tìm thấy dữ liệu đề thi gốc cho bài làm này!');
-      return;
-    }
+        const examMatch = exams.find(e => e.id == sub.exam_id);
+        if (!examMatch) {
+            console.warn('Exam not fully cached.');
+        }
 
-    document.getElementById('modalExamTitle').textContent = `Kết Quả: ${sub.examTitle}`;
-    document.getElementById('modalStudentName').textContent = `Sinh viên: ${sub.studentName} (${sub.studentEmail})`;
+        document.getElementById('modalExamTitle').textContent = `Kết Quả: ${sub.exam_title || 'N/A'}`;
+        document.getElementById('modalStudentName').textContent = `Sinh viên: ${sub.student_name || 'N/A'} (${sub.student_email || 'N/A'})`;
 
-    const scoreEl = document.getElementById('modalExamScore');
-    let correctCount = sub.correctAnswers !== undefined ? sub.correctAnswers : (sub.answers ? sub.answers.filter(a => a.isCorrect).length : 0);
-    let totalQ = sub.totalQuestions || examMatch.questions.length;
-    if (sub.userAnswers && sub.correctAnswers === undefined) {
-      correctCount = examMatch.questions.reduce((count, q, idx) => count + (sub.userAnswers[idx] === q.correctOption ? 1 : 0), 0);
-    }
-    scoreEl.innerHTML = `${sub.score.toFixed(1)} / 10<br><span class="text-xs font-medium text-slate-500 mt-1 block">Đúng: ${correctCount}/${totalQ}</span>`;
-    scoreEl.className = `text-xl font-bold ${sub.score >= 5 ? 'text-emerald-600' : 'text-red-600'}`;
+        const scoreEl = document.getElementById('modalExamScore');
+        let correctCount = sub.correct_answers || 0;
+        let totalQ = sub.total_questions || 0;
+        const scoreNum = parseFloat(sub.score || 0);
+        
+        scoreEl.innerHTML = `${scoreNum.toFixed(1)} / 10<br><span class="text-xs font-medium text-slate-500 mt-1 block">Đúng: ${correctCount}/${totalQ}</span>`;
+        scoreEl.className = `text-xl font-bold ${scoreNum >= 5 ? 'text-emerald-600' : 'text-red-600'}`;
 
     const container = document.getElementById('questionsDetailContainer');
     let html = '';
 
-    examMatch.questions.forEach((q, index) => {
-      let selectedOptIndex = -1;
-      if (sub.answers) {
-        let studentAns = sub.answers.find(a => a.questionId === q.id);
-        if (studentAns) selectedOptIndex = studentAns.selectedOption;
-      } else if (sub.userAnswers) {
-        selectedOptIndex = sub.userAnswers[index] !== null && sub.userAnswers[index] !== undefined ? sub.userAnswers[index] : -1;
-      }
-      let isCorrect = selectedOptIndex === q.correctOption;
+    if (sub.answers && Array.isArray(sub.answers)) {
+        sub.answers.forEach((ans, index) => {
+          let selectedOptIndex = ans.selected_option !== null ? ans.selected_option : -1;
+          let isCorrect = selectedOptIndex === ans.correct_option;
 
-      let bgColor = isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-red-50/50 border-red-200';
-      if (selectedOptIndex === -1) bgColor = 'bg-slate-50 border-slate-200'; // Unanswered
+          let bgColor = isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-red-50/50 border-red-200';
+          if (selectedOptIndex === -1) bgColor = 'bg-slate-50 border-slate-200'; // Unanswered
 
       let badgeHtml = isCorrect
         ? '<span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">check</span> Chấm đúng</span>'
@@ -200,25 +204,26 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="flex-1">
                             <div class="flex items-start justify-between gap-4 mb-4">
-                                <h4 class="font-bold ${textClass} text-base leading-relaxed">${q.text}</h4>
+                                <h4 class="font-bold ${textClass} text-base leading-relaxed">${ans.question_text || 'N/A'}</h4>
                                 <div class="shrink-0 mt-0.5">${badgeHtml}</div>
                             </div>
                             
                             <div class="space-y-2">
             `;
 
-      q.options.forEach((opt, optIdx) => {
+      const options = [ans.option_a, ans.option_b, ans.option_c, ans.option_d];
+      options.forEach((opt, optIdx) => {
         let optBg = 'bg-slate-50 border-slate-200 text-slate-600';
         let checkIcon = '';
         let labelText = opt;
 
-        if (optIdx === q.correctOption) {
+        if (optIdx === ans.correct_option) {
           optBg = 'bg-emerald-500 text-white border-emerald-500 font-medium'; // Correct answer is solid green
           checkIcon = '<span class="material-symbols-outlined text-[16px]">done</span>';
           if (optIdx === selectedOptIndex) {
             labelText = opt + ' <span class="text-emerald-100 text-xs ml-1">(Đã chọn)</span>';
           }
-        } else if (optIdx === selectedOptIndex && selectedOptIndex !== q.correctOption) {
+        } else if (optIdx === selectedOptIndex && selectedOptIndex !== ans.correct_option) {
           optBg = 'bg-red-100 text-red-700 border-red-200 font-medium line-through decoration-red-400'; // Wrong selected answer is red and struck through
           checkIcon = '<span class="material-symbols-outlined text-[16px]">close</span>';
           labelText = opt + ' <span class="text-red-500 text-xs ml-1">(Đã chọn)</span>';
@@ -232,17 +237,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
       });
 
-      html += `
+        html += `
                             </div>
                         </div>
                     </div>
                 </div>
             `;
-    });
+      });
+    }
 
     container.innerHTML = html;
     examDetailModal.classList.remove('hidden');
     document.body.classList.add('overflow-hidden'); // Prevent background scrolling
+  } catch(error) {
+      console.error(error);
+  }
   };
 
   // Close Modals

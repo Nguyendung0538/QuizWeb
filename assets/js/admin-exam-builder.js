@@ -142,32 +142,50 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function loadExamData(id) {
-    const exams = JSON.parse(localStorage.getItem('quiz_exams')) || [];
-    const exam = exams.find(e => e.id === id);
-    if (!exam) return;
+  async function loadExamData(id) {
+    try {
+        if (!window.API) {
+            console.error('API service not loaded');
+            return;
+        }
 
-    document.getElementById('examTitle').value = exam.title;
-    document.getElementById('examType').value = exam.type;
-    document.getElementById('examDuration').value = exam.duration || '';
+        const exam = await window.API.get(`/exams/${id}`);
+        if (!exam) return;
 
-    const isPermCheckbox = document.getElementById('examIsPermanent');
-    if (isPermCheckbox) {
-      isPermCheckbox.checked = exam.isPermanent !== false; // false -> uncheck, default true
-      isPermCheckbox.dispatchEvent(new Event('change'));
-    }
+        document.getElementById('examTitle').value = exam.title || '';
+        document.getElementById('examType').value = exam.type || 'luyen-tap';
+        document.getElementById('examDuration').value = exam.duration || '';
 
-    if (exam.startTime) document.getElementById('examStartTime').value = exam.startTime;
-    if (exam.endTime) document.getElementById('examEndTime').value = exam.endTime;
+        const isPermCheckbox = document.getElementById('examIsPermanent');
+        if (isPermCheckbox) {
+          isPermCheckbox.checked = exam.is_permanent ? true : false;
+          isPermCheckbox.dispatchEvent(new Event('change'));
+        }
 
-    if (exam.questions && exam.questions.length > 0) {
-      exam.questions.forEach(q => addQuestionBlock(q));
-    } else {
-      addQuestionBlock();
+        if (exam.start_time) document.getElementById('examStartTime').value = exam.start_time.substring(0, 16); // format datetime-local
+        if (exam.end_time) document.getElementById('examEndTime').value = exam.end_time.substring(0, 16);
+
+        if (exam.questions && exam.questions.length > 0) {
+          exam.questions.forEach((q, idx) => {
+             // Map backend format back to frontend format
+             const formattedQ = {
+                 text: q.text,
+                 options: [q.option_a, q.option_b, q.option_c, q.option_d],
+                 correctOption: q.correct_option
+             };
+             addQuestionBlock(formattedQ);
+          });
+        } else {
+          addQuestionBlock();
+        }
+
+    } catch (error) {
+        console.error('Lỗi khi tải dữ liệu kỳ thi:', error);
+        showCustomAlert('Không thể tải dữ liệu kỳ thi: ' + error.message);
     }
   }
 
-  function saveExam() {
+  async function saveExam() {
     const title = document.getElementById('examTitle').value.trim();
     const type = document.getElementById('examType').value;
     const duration = document.getElementById('examDuration').value;
@@ -208,7 +226,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       questions.push({
-        id: index + 1,
         text: text,
         options: options,
         correctOption: correctRadio ? parseInt(correctRadio.value) : 0
@@ -219,8 +236,6 @@ document.addEventListener('DOMContentLoaded', () => {
       showCustomAlert('Vui lòng điền đầy đủ đáp án và chọn câu đúng cho tất cả câu hỏi!');
       return;
     }
-
-    const exams = JSON.parse(localStorage.getItem('quiz_exams')) || [];
 
     let examStatus = 'active';
     if (!isPermanent) {
@@ -245,30 +260,44 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    if (editExamId) {
-      // Update existing
-      const index = exams.findIndex(e => e.id === editExamId);
-      if (index > -1) {
-        exams[index] = {
-          ...exams[index],
-          title, type, duration, isPermanent, startTime, endTime, status: examStatus, questions,
-          questionsCount: questions.length
-        };
-      }
-    } else {
-      // Create new
-      const newId = 'EXAM_' + Date.now();
-      exams.push({
-        id: newId,
-        title, type, duration, isPermanent, startTime, endTime,
+    const payload = {
+        id: editExamId ? editExamId : 'EXAM_' + Date.now(), // Generate rough ID if new
+        title: title,
+        type: type,
+        duration: duration,
+        isPermanent: isPermanent,
+        startTime: startTime || null,
+        endTime: endTime || null,
         status: examStatus,
-        questionsCount: questions.length,
-        questions
-      });
-    }
+        questions: questions
+    };
 
-    localStorage.setItem('quiz_exams', JSON.stringify(exams));
-    window.location.href = 'admin-dashboard.html';
+    try {
+        if (!window.API) {
+            showCustomAlert('Lỗi mạng: Không tìm thấy thư viện API.');
+            return;
+        }
+        
+        // Since we haven't built a PUT endpoint yet, we'll delete and re-create if editing.
+        // It's a quick workaround for simple editing until PUT is implemented.
+        if (editExamId) {
+            try {
+               await window.API.delete(`/exams/${editExamId}`);
+            } catch(e) {
+               console.warn("Could not delete old exam to update it:", e);
+            }
+        }
+
+        await window.API.post('/exams', payload);
+        
+        showCustomAlert('Lưu kỳ thi thành công!', () => {
+            window.location.href = 'admin-dashboard.html';
+        });
+
+    } catch (error) {
+        console.error('Error saving exam:', error);
+        showCustomAlert('Có lỗi xảy ra khi lưu kỳ thi: ' + error.message);
+    }
   }
 
   // --- Excel Import Logic ---
